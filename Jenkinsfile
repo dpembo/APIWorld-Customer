@@ -121,7 +121,7 @@ docker build -t productmg:$VERSION .
           steps {
             sh '''#Run the container read for testing
 
-docker run --rm --name customerservicems -d -p 8090:8090 customerservice:$VERSION
+docker run --rm --name customerservicems -d -p 5555:4444 customerservice:$VERSION
 '''
           }
         }
