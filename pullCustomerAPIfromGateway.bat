@@ -1,7 +1,7 @@
 set username=Administrator
 set password=manage
 set url=http://localhost:5555
-set apiID=dda7a194-dced-4c2f-912f-4bd85a3ba965
-set file=.\microgateway\Product.zip
+set apiID=b4032c81-7aee-4d06-b5c7-a3bb92e19c33
+set file=.\microgateway\Customer.zip
 
 curl -u %username%:%password% %url%/rest/apigateway/archive?apis=%apiID% --output %file%
