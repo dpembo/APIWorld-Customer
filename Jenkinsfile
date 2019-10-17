@@ -96,8 +96,8 @@ sudo sed -i \'s/\\[microservice\\]/apiworldbuild\\:8090/g\' $WORKSPACE/microgate
 
 '''
         sh '''#Build MicroGateway
-#cd /opt/softwareag/microgateway
-#./microgateway.sh createDockerFile --docker_dir . -p 9090 -a $WORKSPACE/microgateway/Customer.zip -dof ./Dockerfile -c $WORKSPACE/microgateway/config.yml'''
+cd /opt/softwareag/microgateway
+./microgateway.sh createDockerFile --docker_dir . -p 9090 -a $WORKSPACE/microgateway/Customer.zip -dof ./Dockerfile -c $WORKSPACE/microgateway/config.yml'''
       }
     }
     stage('Containerize') {
