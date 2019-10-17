@@ -62,7 +62,7 @@ rm -rf jmeter
     stage('Build') {
       steps {
         echo 'Build Project'
-        sh '''Set version
+        sh '''#Set version
 
 if [[ -z "$VERSION" ]]; then
    VERSION=ci
