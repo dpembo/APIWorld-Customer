@@ -112,7 +112,7 @@ docker build -t customerservice:$VERSION .
 '''
         sh '''#Containerize Microgateway
 cd /opt/softwareag/microgateway
-docker build -t productmg:$VERSION .
+docker build -t customermg:$VERSION .
 '''
       }
     }
@@ -129,7 +129,7 @@ docker run --rm --name customerservicems -d -p 8090:5555 customerservice:$VERSIO
         stage('Start MicroGW') {
           steps {
             sh '''#Run MicroGateway Container
-docker run --rm --name productmg -d -p 9090:9090 --net=host productmg:$VERSION
+docker run --rm --name customermg -d -p 9090:9090 --net=host customermg:$VERSION
 '''
           }
         }
@@ -148,7 +148,7 @@ exit 1
         stage('Test MicroGW Operational') {
           steps {
             sh '''#Is MicroGW Operational
-timeout 60 bash -c \'while [[ "$(curl -s -o /dev/null -w \'\'%{http_code}\'\' localhost:9090/gateway/Product/1.0/product)" != "200" ]]; do sleep 5; done\' || false'''
+timeout 60 bash -c \'while [[ "$(curl -s -o /dev/null -w \'\'%{http_code}\'\' localhost:9090/gateway/Customer/1.0/customer)" != "200" ]]; do sleep 5; done\' || false'''
           }
         }
       }
