@@ -70,13 +70,9 @@ fi
 
 echo Version is: $VERSION
 
-
-#CompileTest Microservice
-#echo "Compile Microservice"
-#docker run --rm --name service-maven -v "$PWD":/usr/share/mymaven -v "$HOME/.m2":/root/.m2 -v "$PWD"/target:/usr/share/mymaven/target -w /usr/share/mymaven maven:3.6-jdk-8 mvn compile'''
-        sh '''#Package the microservice
-echo "Package the Microservice"
-docker run --rm --name service-maven -v "$PWD":/usr/share/mymaven -v "$HOME/.m2":/root/.m2 -v "$PWD"/target:/usr/share/mymaven/target -w /usr/share/mymaven maven:3.6-jdk-8 mvn package'''
+#Move the package to containerize
+mv ../ISPKG/ ./MSR-Image
+'''
         sh '''echo "Move Package for Docker Build"
 cp $WORKSPACE/target/product-service-0.0.1.jar $WORKSPACE/service.jar'''
         sh '''#Modify Alias depending on stage
@@ -110,8 +106,10 @@ cd /opt/softwareag/microgateway
 
 
 
-docker build -t productservice:$VERSION --build-arg PORT=8090 --build-arg JAR_FILE=service.jar .
-#docker tag productservice:$VERSION productservice:$VERSION'''
+cd MSR-Image
+
+docker build -t customerservice:$VERSION .
+'''
         sh '''#Containerize Microgateway
 cd /opt/softwareag/microgateway
 docker build -t productmg:$VERSION .
@@ -124,7 +122,7 @@ docker build -t productmg:$VERSION .
           steps {
             sh '''#Run the container read for testing
 
-docker run --rm --name productservicems -d -p 8090:8090 productservice:$VERSION
+docker run --rm --name customerservicems -d -p 8090:8090 customerservice:$VERSION
 '''
           }
         }
@@ -142,8 +140,8 @@ docker run --rm --name productmg -d -p 9090:9090 --net=host productmg:$VERSION
         stage('Test MicroSvc Operational') {
           steps {
             sh '''#Are services operational
-
-timeout 60 bash -c \'while [[ "$(curl -s -o /dev/null -w \'\'%{http_code}\'\' localhost:8090/product)" != "200" ]]; do sleep 5; done\' || false
+exit 1
+#timeout 60 bash -c \'while [[ "$(curl -s -o /dev/null -w \'\'%{http_code}\'\' localhost:8090/product)" != "200" ]]; do sleep 5; done\' || false
 '''
           }
         }
