@@ -62,7 +62,7 @@ rm -rf jmeter
     stage('Build') {
       steps {
         echo 'Build Project'
-        sh '''#Build Microservice
+        sh '''Set version
 
 if [[ -z "$VERSION" ]]; then
    VERSION=ci
@@ -70,12 +70,10 @@ fi
 
 echo Version is: $VERSION
 
-#Move the package to containerize
 
-mv ./ISPKG/ ./MSR-Image/
 '''
         sh '''echo "Move Package for Docker Build"
-cp $WORKSPACE/target/product-service-0.0.1.jar $WORKSPACE/service.jar'''
+mv ./ISPKG/ ./MSR-Image/'''
         sh '''#Modify Alias depending on stage
 
 if [ $GIT_BRANCH = "staging" ]; then
