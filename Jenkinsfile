@@ -62,7 +62,9 @@ rm -rf jmeter
     stage('Build') {
       steps {
         echo 'Build Project'
-        sh '''if [[ -z "$VERSION" ]]; then
+        sh '''#Build Microservice
+
+if [[ -z "$VERSION" ]]; then
    VERSION=ci
 fi
 
@@ -70,8 +72,8 @@ echo Version is: $VERSION
 
 
 #CompileTest Microservice
-echo "Compile Microservice"
-docker run --rm --name service-maven -v "$PWD":/usr/share/mymaven -v "$HOME/.m2":/root/.m2 -v "$PWD"/target:/usr/share/mymaven/target -w /usr/share/mymaven maven:3.6-jdk-8 mvn compile'''
+#echo "Compile Microservice"
+#docker run --rm --name service-maven -v "$PWD":/usr/share/mymaven -v "$HOME/.m2":/root/.m2 -v "$PWD"/target:/usr/share/mymaven/target -w /usr/share/mymaven maven:3.6-jdk-8 mvn compile'''
         sh '''#Package the microservice
 echo "Package the Microservice"
 docker run --rm --name service-maven -v "$PWD":/usr/share/mymaven -v "$HOME/.m2":/root/.m2 -v "$PWD"/target:/usr/share/mymaven/target -w /usr/share/mymaven maven:3.6-jdk-8 mvn package'''
@@ -99,7 +101,7 @@ sudo sed -i \'s/\\[microservice\\]/apiworldbuild\\:8090/g\' $WORKSPACE/microgate
 '''
         sh '''#Build MicroGateway
 cd /opt/softwareag/microgateway
-./microgateway.sh createDockerFile --docker_dir . -p 9090 -a $WORKSPACE/microgateway/Product.zip -dof ./Dockerfile -c $WORKSPACE/microgateway/config.yml'''
+./microgateway.sh createDockerFile --docker_dir . -p 9090 -a $WORKSPACE/microgateway/Customer.zip -dof ./Dockerfile -c $WORKSPACE/microgateway/config.yml'''
       }
     }
     stage('Containerize') {
