@@ -73,7 +73,8 @@ echo Version is: $VERSION
 
 '''
         sh '''echo "Move Package for Docker Build"
-mv ./ISPKG/ ./MSR-Image/'''
+mv ./ISPKG/ ./MSR-Image/
+cp /home/ukdxp/msr-license/licenseKey.xml ./MSR-Image/'''
         sh '''#Modify Alias depending on stage
 
 if [ $GIT_BRANCH = "staging" ]; then
