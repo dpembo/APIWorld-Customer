@@ -71,7 +71,8 @@ fi
 echo Version is: $VERSION
 
 #Move the package to containerize
-mv ../ISPKG/ ./MSR-Image
+pwd
+mv ../ISPKG/ ./MSR-Image/
 '''
         sh '''echo "Move Package for Docker Build"
 cp $WORKSPACE/target/product-service-0.0.1.jar $WORKSPACE/service.jar'''
