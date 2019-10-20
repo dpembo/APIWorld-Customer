@@ -140,8 +140,7 @@ docker run --rm --name customermg -d -p 9090:9090 --net=host customermg:$VERSION
         stage('Test MicroSvc Operational') {
           steps {
             sh '''#Are services operational
-exit 1
-#timeout 60 bash -c \'while [[ "$(curl -s -o /dev/null -w \'\'%{http_code}\'\' localhost:8090/restv2/com.softwareag.customer.pub:customer/customer)" != "200" ]]; do sleep 5; done\' || false
+timeout 60 bash -c \'while [[ "$(curl -s -o /dev/null -w \'\'%{http_code}\'\' localhost:8090/restv2/com.softwareag.customer.pub:customer/customer)" != "200" ]]; do sleep 5; done\' || false
 '''
           }
         }
