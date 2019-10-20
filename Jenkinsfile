@@ -324,6 +324,11 @@ docker volume prune -f
 '''
       }
     }
+    stage('Quality Review') {
+      steps {
+        sh '/home/ukdxp/GCS_IS_ContinuousCodeReview_v7.1.0/CodeReview.sh -Dcode.review.pkgname=SAGCustomerData -Dcode.review.pkgprefix=SAG -Dcode.review.folder-prefix=com.softwareag -Dcode.review.directory=$WORKSPACE/ISPKG'
+      }
+    }
   }
   post {
     always {
