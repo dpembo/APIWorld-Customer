@@ -336,7 +336,7 @@ docker volume prune -f
   }
   post {
     always {
-      junit '/var/lib/jenkins/workspace/APIWorld-Customer_Development/MSR-Image/ISPKG/APIWCustomer/resources/test/executor/test/reports/**/*.xml'
+      junit '/var/lib/jenkins/workspace/APIWorld-Customer_Development/MSR-Image/ISPKG/APIWCustomer/resources/test/executor/test/reports/*.xml'
 
     }
 
