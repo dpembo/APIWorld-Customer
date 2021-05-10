@@ -112,6 +112,7 @@ cd /opt/softwareag/microgateway
 
 
 cd MSR-Image
+ls -al
 
 docker build -t customerservice:$VERSION .
 '''
