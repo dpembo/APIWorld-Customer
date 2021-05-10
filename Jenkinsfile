@@ -110,7 +110,7 @@ cd /opt/softwareag/microgateway
         sh '''#Containerize Microservice
 
 
-
+pwd
 cd MSR-Image
 ls -al
 
