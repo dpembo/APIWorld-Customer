@@ -110,8 +110,9 @@ cd /opt/softwareag/microgateway
         sh '''#Containerize Microservice
 
 
-
+pwd
 cd MSR-Image
+ls -al
 
 docker build -t customerservice:$VERSION .
 '''
