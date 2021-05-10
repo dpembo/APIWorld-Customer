@@ -336,9 +336,7 @@ docker volume prune -f
   }
   post {
     always {
-      junit 'MSR-Image/ISPKG/APIWCustomer/resources/test/executor/reports/**/*.xml'
-      perfReport(sourceDataFiles: 'jmeter/result.jtl', compareBuildPrevious: true, errorUnstableResponseTimeThreshold: '5000')
-      archiveArtifacts(artifacts: 'jmeter/result.*', fingerprint: true)
+      junit './MSR-Image/ISPKG/APIWCustomer/resources/test/executor/reports/**/*.xml'
 
     }
 
