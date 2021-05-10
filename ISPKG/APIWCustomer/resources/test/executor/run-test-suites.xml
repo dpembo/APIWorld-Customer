@@ -1,0 +1,435 @@
+<?xml version="1.0"?>
+
+<!--
+Optional ant properties:
+=======================
+webMethods.projects.location - Location where the test suite projects or packages resides. 
+Default location is WmTestSuiteExecutor's parent folder.
+
+webMethods.test.xml.files - Comma separated list of test suite files path(Path relative to project or package).
+This property is part of individual project's build.properties file. By default it includes all the test suite 
+file inside the project or package.
+
+Exclude/Include packages:
+========================
+You can update/modify "runall-test" target to exclude/include test suite packages or projects.
+-->
+
+<project name="BuildTest" default="runall-test" basedir="." xmlns:antcontrib="antlib:net.sf.antcontrib" xmlns:xmltask="antlib:com.oopsconsultancy.xmltask">
+	<property name="test.reports.dir" location="test/reports" />
+	<property name="webMethods.projects.location" value="${basedir}/.." />
+	<property file="run-test-suites.properties" />
+
+	<property name="build.javac.target" value="1.8" />
+	<available property="webMethods.package.dir.exists" file="${webMethods.package.dir}" type="dir" />
+
+	<!-- SETUP CLASSPATHS AND OTHER REFERENCES -->
+	<path id="classpath.webMethods.package">
+		<fileset dir="${webMethods.package.dir}/code/jars">
+			<include name="**/*.jar" />
+		</fileset>
+		<pathelement location="${webMethods.package.dir}/code/classes" />
+		<pathelement location="${webMethods.package.dir}/resources/test/classes" />
+	</path>
+	<path id="classpath.webMethods">
+		<path refid="classpath.webMethods.package" />
+	</path>
+	<path id="classpath.testsuite">
+		 <fileset dir="${webMethods.home}/common/lib/testsuite">
+                        <include name="**/*.jar" />
+                </fileset>
+		<fileset file="${webMethods.home}/common/lib/wm-isclient.jar"/>
+                <fileset file="${webMethods.home}/common/lib/ext/icu4j.jar"/>
+                <fileset file="${webMethods.home}/common/lib/ext/enttoolkit.jar"/>
+                <fileset file="${webMethods.home}/IntegrationServer/lib/wm-isserver.jar"/>
+                <fileset file="${webMethods.home}/common/lib/wm-g11nutils.jar"/>
+                <fileset file="${webMethods.home}/common/lib/glassfish/gf.javax.mail.jar"/>
+                <fileset file="${webMethods.home}/common/lib/ant/ant-contrib-1.0b3.jar"/>
+	</path>
+
+	<path id="classpath.all">
+		<path refid="classpath.testsuite" />
+	</path>
+
+	<target name="runall-test">
+		<taskdef resource="net/sf/antcontrib/antcontrib.properties" uri="antlib:net.sf.antcontrib" classpathref="classpath.all" />
+		<taskdef uri="antlib:net.sf.antcontrib" resource="net/sf/antcontrib/antlib.xml" classpathref="classpath.all" />
+		<basename property="current.project" file="${basedir}"/>
+		<dirset id="dist.contents" dir="${webMethods.projects.location}">
+			<!--include name="WmServiceMockSamples" /-->
+			<include name="*"/>
+			<exclude name=".*"/>
+			<exclude name="RemoteSystemsTempFiles"/>
+			<exclude name="${current.project}"/>
+		</dirset>
+		<property name="webMethods.projects.filter" refid="dist.contents" />
+
+		<antcontrib:for list="${webMethods.projects.filter}" delimiter=";" param="val">
+			<sequential>
+				<antcall target="clean">
+					<param name="webMethods.package.name" value="@{val}" />
+					<param name="webMethods.package.dir" value="${webMethods.projects.location}/@{val}" />
+				</antcall>
+				<antcall target="compile-test">
+					<param name="webMethods.package.name" value="@{val}" />
+					<param name="webMethods.package.dir" value="${webMethods.projects.location}/@{val}" />
+				</antcall>
+			</sequential>
+		</antcontrib:for>
+
+		<antcall target="start-is" />
+		
+		<ant dir="deployer" antfile="build-deploy.xml" target="build-deploy"/>
+		
+		<antcontrib:for list="${webMethods.projects.filter}" delimiter=";" param="val">
+			<sequential>
+				<antcall target="runtest-project">
+					<param name="webMethods.package.name" value="@{val}" />
+					<param name="webMethods.package.dir" value="${webMethods.projects.location}/@{val}" />
+				</antcall>
+			</sequential>
+		</antcontrib:for>
+	</target>
+
+	<target name="set-project-properties">
+		<antcontrib:var name="resource.dir" unset="true" />
+		<antcontrib:var name="test.xml.dir" unset="true" />
+		<antcontrib:var name="test.source.dir" unset="true" />
+		<antcontrib:var name="java.source.dir" unset="true" />
+		<antcontrib:var name="java.build.dir" unset="true" />
+		<antcontrib:var name="test.build.dir" unset="true" />
+		<antcontrib:var name="java.jars.dir" unset="true" />
+		<antcontrib:var name="test.jars.dir" unset="true" />
+		<antcontrib:var name="library.dir" unset="true" />
+
+		<property name="resource.dir" location="${webMethods.package.dir}/resources" />
+		<property name="test.xml.dir" location="${resource.dir}/test/setup" />
+		<property name="test.source.dir" location="${resource.dir}/test/source" />
+		<property name="java.source.dir" location="${resource.dir}/java/source" />
+		<property name="java.build.dir" location="${resource.dir}/java/classes" />
+		<property name="test.build.dir" location="${resource.dir}/test/classes" />
+		<property name="java.jars.dir" location="${resource.dir}/java/jars" />
+		<property name="test.jars.dir" location="${resource.dir}/test/jars" />
+		<property name="library.dir" location="${resource.dir}/jars" />
+	</target>
+	<target name="runtest-project" depends="set-project-properties">
+		<property file="${webMethods.package.dir}/build.properties" />
+		<echo>Package Name: ${webMethods.package.name}</echo>
+		<antcall target="collect-test-suite" />
+	</target>
+
+	<target name="collect-test-suite">
+		<condition property="setup.files.exists" else="false">
+			<isset property="webMethods.test.xml.files" />
+		</condition>
+		<echo>${setup.files.exists}</echo>
+		<antcontrib:if>
+			<available file="${test.xml.dir}" type="dir" />
+			<then>
+				<antcontrib:for param="test.setup.file">
+					<path>
+						<fileset dir="${test.xml.dir}" includes="*.xml" />
+					</path>
+					<sequential>
+						<antcontrib:var name="file.basename" unset="true" />
+						<basename property="file.basename" file="@{test.setup.file}" suffix=".xml" />
+						<antcall target="run-test-suite">
+							<param name="valid.webMethodsTestSuite" value="true" />
+							<param name="file.basename" value="${file.basename}" />
+							<param name="webMethods.test.setup.filename" value="@{test.setup.file}" />
+							<param name="webMethods.integrationServer.port" value="${webMethods.integrationServer.port}" />
+						</antcall>
+					</sequential>
+				</antcontrib:for>
+			</then>
+			<else>
+				<antcontrib:if>
+					<equals arg1="${setup.files.exists}" arg2="true" />
+					<then>
+						<antcontrib:for list="${webMethods.test.xml.files}" delimiter=";," param="test.setup.file">
+							<sequential>
+								<antcontrib:var name="file.basename" unset="true" />
+								<basename property="file.basename" file="@{test.setup.file}" suffix=".xml" />
+								<antcall target="run-test-suite">
+									<param name="valid.webMethodsTestSuite" value="true" />
+									<param name="file.basename" value="${file.basename}" />
+									<param name="webMethods.test.setup.filename" value="@{test.setup.file}" />
+									<param name="webMethods.integrationServer.port" value="${webMethods.integrationServer.port}" />
+								</antcall>
+							</sequential>
+						</antcontrib:for>
+					</then>
+					<else>
+						<antcontrib:for param="test.setup.file">
+							<path>
+								<fileset dir="${webMethods.package.dir}" includes="**/*.xml" />
+							</path>
+							<sequential>
+								<antcontrib:var name="file.basename" unset="true" />
+								<antcontrib:var name="valid.webMethodsTestSuite" unset="true" />
+								<antcontrib:var name="webMethodsTestSuite.name" unset="true" />
+								<basename property="file.basename" file="@{test.setup.file}" suffix=".xml" />
+								<xmlproperty file="@{test.setup.file}" collapseAttributes="true"/>
+								<condition property="valid.webMethodsTestSuite" else="false">
+									<isset property="webMethodsTestSuite.name" />
+								</condition>
+								<antcall target="run-test-suite">
+									<param name="valid.webMethodsTestSuite" value="${valid.webMethodsTestSuite}" />
+									<param name="file.basename" value="${file.basename}" />
+									<param name="webMethods.test.setup.filename" value="@{test.setup.file}" />
+									<param name="webMethods.integrationServer.port" value="${webMethods.integrationServer.port}" />
+								</antcall>
+							</sequential>
+						</antcontrib:for>
+					</else>
+				</antcontrib:if>
+			</else>
+		</antcontrib:if>
+
+	</target>
+
+	<target name="run-test-suite" if="${valid.webMethodsTestSuite}">
+		<echo>${webMethods.test.setup.filename}</echo>
+		<mkdir dir="${test.reports.dir}" />
+		<junit printsummary="yes" haltonfailure="no" fork="true" failureproperty="test:failure" showoutput="true" dir="${webMethods.package.dir}">
+			<jvmarg value="-DwebMethods.integrationServer.name=${webMethods.integrationServer.name}" />
+			<jvmarg value="-DwebMethods.integrationServer.port=${webMethods.integrationServer.port}" />
+			<jvmarg value="-DwebMethods.integrationServer.userid=${webMethods.integrationServer.userid}" />
+			<jvmarg value="-DwebMethods.integrationServer.password=${webMethods.integrationServer.password}" />
+			<jvmarg value="-DwebMethods.integrationServer.ssl=${webMethods.integrationServer.ssl}" />
+			<jvmarg value="-DwebMethods.test.setup.filename=${webMethods.test.setup.filename}" />
+			<classpath>
+				<path refid="classpath.all" />
+				<pathelement location="${test.build.dir}" />
+			</classpath>
+			<formatter type="xml" />
+			<test name="com.wm.ps.test.WmTestSuite" outfile="TEST-${webMethods.package.name}_${file.basename}" haltonerror="false" haltonfailure="false" todir="${test.reports.dir}" />
+		</junit>
+
+		<junitreport todir="${test.reports.dir}">
+			<fileset dir="${test.reports.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${test.reports.dir}/html" />
+		</junitreport>
+	</target>
+
+	<target name="init" depends="validate-configuration, determine-packages-dir">
+		<!-- create build directories -->
+		<mkdir dir="${java.build.dir}" />
+		<mkdir dir="${test.build.dir}" />
+		<mkdir dir="${java.jars.dir}" />
+		<mkdir dir="${test.jars.dir}" />
+		<mkdir dir="${webMethods.package.dir}/code/classes" />
+		<mkdir dir="${webMethods.package.dir}/code/jars" />
+		<mkdir dir="${library.dir}" />
+	</target>
+	<target name="determine-packages-dir">
+		<antcontrib:if>
+			<isset property="webMethods.integrationServer.packages.dir" />
+			<then>
+				<echo>Packages directory of Integration Server explicitly specified: ${webMethods.integrationServer.packages.dir}</echo>
+			</then>
+			<elseif>
+				<available file="${webMethods.home}/IntegrationServer/instances/default/packages" type="dir" />
+				<then>
+					<property name="webMethods.integrationServer.packages.dir" value="${webMethods.home}/IntegrationServer/instances/default/packages" />
+					<echo>Packages directory of Integration Server found: ${webMethods.integrationServer.packages.dir}</echo>
+				</then>
+			</elseif>
+			<else>
+				<property name="webMethods.integrationServer.packages.dir" value="${webMethods.home}/IntegrationServer/packages" />
+				<echo>Packages directory of Integration Server found: ${webMethods.integrationServer.packages.dir}</echo>
+			</else>
+		</antcontrib:if>
+	</target>
+	<target name="validate-configuration" depends="set-project-properties">
+		<!--antunit:assertTrue message="Ant 1.7 is the minimum required to run this build.">
+			<matches string="${ant.version}">
+				<regexp pattern="[vV]ersion\s+((1\.[7-9])|([2-9]))" />
+			</matches>
+		</antunit:assertTrue>
+
+		<antunit:assertTrue message="Java 1.5 is required to run this build.">
+			<matches string="${java.version}">
+				<regexp pattern="(1\.[5-9])|(^[2-9])" />
+			</matches>
+		</antunit:assertTrue>
+
+		<fail message="Property webMethods.package.name must be defined" unless="webMethods.package.name" />
+		<fail message="Property webMethods.home or environment variable WEBMETHODS_HOME must be defined" unless="webMethods.home" />
+		<fail message="Package folder ${webMethods.package.dir} does not exist" unless="webMethods.package.dir.exists" /-->
+	</target>
+
+
+
+	<target name="compile-package" depends="init,classpath-add-required-packages">
+		<!-- create empty directories if they dont exist -->
+		<mkdir dir="${webMethods.package.dir}/code/source" />
+		<echo>Standard classpath = ${toString:classpath.webMethods}</echo>
+		<echo>Classpath from dependent packages = ${toString:classpath.webMethods.package.ext}</echo>
+		<!-- compile webMethods package source -->
+		<javac srcdir="${webMethods.package.dir}/code/source" destdir="${webMethods.package.dir}/code/classes" debug="${javac.debug}" target="${build.javac.target}" source="${build.javac.target}" includeantruntime="false">
+			<classpath>
+				<pathelement location="${webMethods.package.dir}/code/classes" />
+				<path refid="classpath.all" />
+				<path refid="classpath.webMethods" />
+				<path refid="classpath.webMethods.package.ext" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="compile-test" depends="compile-java,compile-package">
+		<!-- compile source -->
+		<javac srcdir="${test.source.dir}" destdir="${test.build.dir}" debug="${javac.debug}" target="${build.javac.target}" source="${build.javac.target}" includeantruntime="false">
+			<classpath>
+				<path refid="classpath.all" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="clean" depends="validate-configuration">
+		<!-- remove build directories -->
+		<delete dir="${java.build.dir}" quiet="true" />
+		<delete dir="${test.build.dir}" quiet="true" />
+		<delete dir="${java.jars.dir}" quiet="true" />
+		<delete dir="${test.jars.dir}" quiet="true" />
+		<delete quiet="true">
+			<fileset dir="${webMethods.package.dir}/code/classes" includes="**/*.class"/>
+		</delete>
+	</target>
+
+	<target name="compile-java" depends="init">
+		<!-- create empty directories if they dont exist -->
+		<mkdir dir="${java.source.dir}" />
+		<mkdir dir="${test.source.dir}" />
+		<!-- compile source -->
+		<javac srcdir="${java.source.dir}" destdir="${java.build.dir}" debug="${javac.debug}" target="${build.javac.target}" source="${build.javac.target}" includeantruntime="false">
+			<classpath>
+				<path refid="classpath.all" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="classpath-add-required-packages">
+		<xmlproperty file="${webMethods.package.dir}/manifest.v3" collapseAttributes="true" />
+		<property name="classpathExtPackages" value="" />
+		<antcontrib:if>
+			<equals arg1="${Values.record.name}" arg2="requires" />
+			<then>
+				<antcontrib:for list="${Values.record.value.name}" param="extPkg">
+					<sequential>
+						<echo>Is required packages '@{extPkg}' checked out?</echo>
+						<antcontrib:var name="pathExtPackage" value="${webMethods.package.dir}/../@{extPkg}" />
+						<antcontrib:var name="extPackage.present" unset="true" />
+
+						<!-- Is required package in WmBuildTools work area? -->
+						<available type="dir" file="${pathExtPackage}" property="extPackage.present" />
+						<!-- Is required package among running IS packages? -->
+						<available type="dir" file="${webMethods.integrationServer.packages.dir}/@{extPkg}" property="stdPackage.present" />
+						<antcontrib:if>
+							<isset property="extPackage.present" />
+							<then>
+								<echo>  Yes, adding class and jar files from package '@{extPkg}' to classpath</echo>
+								<path id="classpath.extPkgs">
+									<fileset dir="${webMethods.package.dir}/../@{extPkg}/code/jars">
+										<include name="**/*.jar" />
+									</fileset>
+									<pathelement location="${webMethods.package.dir}/../@{extPkg}/code/classes" />
+								</path>
+								<antcontrib:var name="classpathExtPackages" value="${classpathExtPackages};${toString:classpath.extPkgs}" />
+							</then>
+							<elseif>
+								<isset property="stdPackage.present" />
+								<then>
+									<echo message="Required package '@{extPkg}' found in IS packages directory" />
+									<path id="classpath.extPkgs">
+										<fileset dir="${webMethods.integrationServer.packages.dir}/@{extPkg}/code/jars">
+											<include name="**/*.jar" />
+										</fileset>
+										<pathelement location="${webMethods.integrationServer.packages.dir}/@{extPkg}/code/classes" />
+									</path>
+									<antcontrib:var name="classpathExtPackages" value="${classpathExtPackages};${toString:classpath.extPkgs}" />
+								</then>
+							</elseif>
+							<else>
+								<fail message="Required package '@{extPkg}' was not found" />
+							</else>
+						</antcontrib:if>
+					</sequential>
+				</antcontrib:for>
+				<path id="classpath.webMethods.package.ext">
+					<pathelement path="${classpathExtPackages}" />
+				</path>
+
+			</then>
+			<else>
+				<echo>No additional packages are required</echo>
+				<path id="classpath.webMethods.package.ext" />
+			</else>
+		</antcontrib:if>
+	</target>
+
+	<!-- This target will set the os type property -->
+	<target name="set.os.type">
+		<condition property="isUnix">
+			<os family="unix" />
+		</condition>
+		<condition property="isWin">
+			<os family="windows" />
+		</condition>
+	</target>
+
+	<target name="check-is-started" description="Checks if the webMethods Integration Server is running"
+			depends="set.os.type">
+		<condition property="is.server.running">
+			<and>
+				<socket port="${webMethods.integrationServer.port}" server="${webMethods.integrationServer.name}"/>
+			</and>
+		</condition>
+	</target>
+
+	<target name="start-is-win" description="Starts the webMethods Integration Server, if not running"
+	        depends="check-is-started" unless="is.server.running" if="${isWin}">
+		<parallel>
+			<daemons>
+				<exec executable="cmd">
+					<arg line="/c ${webMethods.home}/profiles/IS_default/bin/startup.bat"/>
+				</exec>
+			</daemons>
+			<sequential>
+				<waitfor maxwait="5" maxwaitunit="minute" checkevery="500" timeoutproperty="wm.timeout">
+					<and>
+						<socket server="${webMethods.integrationServer.name}" port="${webMethods.integrationServer.port}"/>
+					</and>
+				</waitfor>
+				<fail if="wm.timeout" message="webMethods Integration Server failed to start."/>
+				<echo message="webMethods Integration Server started."/>
+			</sequential>
+		</parallel>
+	</target>
+
+	<target name="start-is">
+		<antcall target="start-is-win"/>
+		<antcall target="start-is-unix"/>
+	</target>
+	<target name="start-is-unix" description="Starts the webMethods Integration Server, if not running"
+		        depends="check-is-started" unless="is.server.running" if="${isUnix}">
+		<parallel>
+			<daemons>
+				<exec executable="/bin/bash">
+					<arg line="-c ${webMethods.home}/profiles/IS_default/bin/startup.sh"/>
+				</exec>
+			</daemons>
+			<sequential>
+				<waitfor maxwait="5" maxwaitunit="minute" checkevery="500" timeoutproperty="wm.timeout">
+					<and>
+						<socket server="${webMethods.integrationServer.name}" port="${webMethods.integrationServer.port}"/>
+					</and>
+				</waitfor>
+				<fail if="wm.timeout" message="webMethods Integration Server failed to start."/>
+				<echo message="webMethods Integration Server started."/>
+			</sequential>
+		</parallel>
+	</target>
+</project>

@@ -1,0 +1,253 @@
+<div style="height: 50px; background-color: rgb(8, 153, 204);" class="sag-header style-scope sag-page-header">
+    <nav role="navigation" style="height: 50px;" class="sag-navbarblock sag-navbar-default style-scope sag-page-header">
+        <style class="style-scope sag-page-header">
+            .sag-navbar-default {
+                background-color: #0899CC;
+                color: white;
+            }
+
+            .sag-navbarblock {
+                position: relative;
+                padding: 0 30px;
+                min-height: 50px;
+                margin: 0;
+                border-radius: 0;
+                line-height: normal;
+            }
+
+            .sag-navbar-toggle {
+                color: rgba(0, 0, 0, .5);
+                border-color: rgba(0, 0, 0, .1);
+                display: none;
+                width: 1.5em;
+                height: 1.5em;
+                vertical-align: middle;
+            }
+
+            .sag-navbar-collapse {
+                width: 100%;
+                display: none;
+                box-sizing: border-box;
+            }
+
+            .sag-navbar-show {
+                display: block;
+            }
+
+            .sag-brand-title {
+                padding: 14px 16px;
+                display: inline-block;
+                float: left;
+            }
+
+            .sag-brand-title a {
+                text-decoration: none;
+                color: #fff;
+                font-weight: bold;
+            }
+
+            @media (min-width: 992px) {
+                .sag-navbar-toggle {
+                    display: none;
+                }
+                .sag-navbar-collapse {
+                    display: block;
+                }
+            }
+        </style>
+        <div class="sag-navbar-toggleblock style-scope sag-page-header">
+            <button type="button" data-toggle="collapse" class="sag-navbar-toggle collapsed style-scope sag-page-header">
+                <span class="sr-only style-scope sag-page-header">Toggle navigation</span>
+                <span class="icon-bar style-scope sag-page-header"></span>
+                <span class="icon-bar style-scope sag-page-header"></span>
+                <span class="icon-bar style-scope sag-page-header"></span>
+            </button>
+            <a class="sag-navbar-brandblock style-scope sag-page-header">
+                <style class="style-scope sag-page-header">
+                    .sag-navbar-brandblock {
+                        display: inline-block;
+                        padding-top: .7rem;
+                        font-size: 1.25rem;
+                        line-height: inherit;
+                        white-space: nowrap;
+                        margin-right: 40px;
+                        float: left;
+                        box-sizing: border-box;
+                    }
+
+                    ::slotted(*) {
+                        vertical-align: middle;
+                        border-style: none;
+                    }
+                </style>
+                <img src="images/utf_logo.png" alt="WebMethods Test Suite" class="style-scope sag-page-header" height=""
+                    width="">
+            </a>
+        </div>
+        <div class="sag-navbar-collapse style-scope sag-page-header">
+            <div class="style-scope sag-page-header">
+                <style class="style-scope sag-page-header">
+                    :host {
+                        box-sizing: border-box;
+                    }
+
+                    .sag-nav {
+                        margin: 0;
+                        padding: 0;
+                        list-style-type: none;
+                        display: inline-block;
+                        float: left;
+                    }
+
+                    .sag-navbar-navblock {
+                        position: relative;
+                        display: none;
+                        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+                        color: inherit;
+                        font-size: 18px;
+                        font-weight: 400;
+                        line-height: 20px;
+                        text-decoration: none;
+                        box-sizing: border-box;
+                    }
+
+                    .sag-padding a {
+                        padding: 15px;
+                    }
+
+                    ::slotted {
+                        margin-left: 10px;
+                    }
+
+                    .sag-navbar-navblock a {
+                        color: #fff;
+                        display: inline-block;
+                        text-decoration: none;
+                    }
+
+                    .sag-profile-menu {
+                        height: inherit;
+                        position: relative;
+                        min-width: 120px;
+                    }
+
+                    .sag-profile-menu>li {
+                        margin: 0;
+                    }
+
+                    .sag-profile-menu .sag-dropdown {
+                        position: relative;
+                        display: inline-block;
+                    }
+
+                    .sag-profile-menu .sag-dropdown-toggle {
+                        color: #fff;
+                        display: inline-block;
+                        font-weight: 400;
+                        text-decoration: none;
+                        padding: 15px;
+                        padding-right: 0;
+                    }
+
+                    .sag-profile-menu .sag-dropdown-menu {
+                        text-align: center;
+                        border-radius: 0;
+                        margin-top: 0;
+                    }
+
+                    .sag-profile-menu .sag-dropdown-menu>li {
+                        border-bottom: 1px solid #EAEAEA;
+                    }
+
+                    .sag-dropdown .sag-dropdown-toggle .caret {
+                        display: inline-block;
+                        width: 0;
+                        height: 0;
+                        margin-left: 10px;
+                        vertical-align: middle;
+                        border-top: 4px dashed;
+                        border-top: 4px solid 9;
+                        border-right: 4px solid transparent;
+                        border-left: 4px solid transparent;
+                    }
+
+                    .sag-navbar-navblock a:hover {
+                        background: #006F97;
+                        color: inherit;
+                        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15);
+                        outline: none;
+                        text-decoration: none;
+                    }
+
+                    .sag-dropdown-menu {
+                        background: #fff;
+                        position: absolute;
+                        padding: 0;
+                        font-size: 14px;
+                        top: 100%;
+                        left: 0;
+                        z-index: 1000;
+                        min-width: 100%;
+                        border: 1px solid rgba(0, 0, 0, 0.15);
+                        border-radius: 4px;
+                        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+                        list-style: none;
+                        box-sizing: border-box;
+                    }
+
+                    .sag-dropdown-menu>li>a {
+                        box-sizing: border-box;
+                        display: inline-block;
+                        color: #333;
+                        padding: 20px 20px 15px;
+                        width: 100%;
+                        text-decoration: none;
+                    }
+
+                    .sag-dropdown-menu a:hover {
+                        background: #e5e4e4;
+                        color: #0899CC;
+                        text-decoration: none;
+                        outline: none;
+                    }
+
+                    @media (min-width: 992px) {
+                        .sag-navbar-navblock {
+                            display: inline-block;
+                        }
+                        .sag-profile-menu {
+                            float: right;
+                        }
+                    }
+                </style>
+                <ul class="sag-nav style-scope sag-page-header">
+                    <li class="sag-navbar-navblock sag-padding style-scope sag-page-header">
+                        <a href="#!view/fullpackageview" title="Full Packages View" target="" class="sag-link style-scope sag-page-header">
+                            <i style="margin-right: 5px;" class="glyphicon glyphicon-list-alt style-scope sag-page-header">
+
+                            </i>Full Packages View</a>
+                    </li>
+                    <li class="sag-navbar-navblock sag-padding style-scope sag-page-header">
+                        <a href="#!view/executionmodel" title="Execution Model" target="" class="sag-link style-scope sag-page-header">
+                            <i style="margin-right: 5px;" class="glyphicon glyphicon-road style-scope sag-page-header">
+
+                            </i>Execution Model</a>
+                    </li>
+                    <li class="sag-navbar-navblock sag-padding style-scope sag-page-header">
+                        <a href="#!view/servicelevel" title="Service Level" target="" class="sag-link style-scope sag-page-header">
+                            <i style="margin-right: 5px;" class="glyphicon glyphicon-arrow-right style-scope sag-page-header">
+
+                            </i>Service Level</a>
+                    </li>
+                    <li class="sag-navbar-navblock sag-padding style-scope sag-page-header">
+                        <a href="#!view/mockdetails" title="Mock Details" target="" class="sag-link style-scope sag-page-header">
+                            <i style="margin-right: 5px;" class="glyphicon glyphicon glyphicon-compressed style-scope sag-page-header">
+
+                            </i>Mock Events</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>

@@ -1,0 +1,31 @@
+<div class="col-sm-3" ng-if="((pagecontext == 'fullpackageview') || (pagecontext == 'servicelevel') || (pagecontext == 'executionmodel'))">
+    <div class="panel panel-summary">
+        <div class="panel-heading">Coverage</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-9">
+                    <div class="stack-order">
+                        <h2 class="no-margins">
+                            <div class="panel-body-summary-header-no-percent">{{overallsummary.coveragepercent_cs}} %</div>
+                        </h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-6">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-danger" ng-attr-style="width:{{100-overallsummary.overall_coveragepercent}}%;">
+                            <span class="sr-only">{{100-overallsummary.overall_coveragepercent}}% Missed (danger)</span>
+                        </div>
+                        <div class="progress-bar progress-bar-success" ng-attr-style="width:{{overallsummary.overall_coveragepercent}}%;">
+                            <span class="sr-only">{{overallsummary.overall_coveragepercent}}% Covered (success)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4"></div>
+            </div>
+        </div>
+    </div>
+</div>

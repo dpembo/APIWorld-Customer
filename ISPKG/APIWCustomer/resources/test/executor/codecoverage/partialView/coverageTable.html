@@ -1,0 +1,17 @@
+<div class="row">
+    <div class="col-sm-12">
+    <h2 ng-if="(pagecontext == 'fullpackageview')" style="padding:10px 0 20px 0">Coverage BreakDown by IS Packages</h2>
+    <h2 ng-if="(pagecontext == 'servicelevel')" style="padding:10px 0 20px 0">Services Coverage BreakDown by IS Packages</h2>
+    <h2 ng-if="(pagecontext == 'executionmodel')" style="padding:10px 0 20px 0">Coverage BreakDown by Tests</h2>
+    <h2 ng-if="(pagecontext == 'mockDetails')" style="padding:10px 0 20px 0">Mock Events during Test Session</h2>
+    <div 
+      data-ui-grid="gridOptions" 
+      data-ui-grid-tree-view 
+      ui-grid-resize-columns 
+      ui-grid-move-columns 
+      ui-grid-pagination 
+      ui-grid-selection 
+      ui-grid-auto-resize class="grid">
+  </div>
+</div>
+</div>

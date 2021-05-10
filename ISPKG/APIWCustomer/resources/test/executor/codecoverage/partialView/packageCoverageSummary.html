@@ -1,0 +1,67 @@
+<div class="row" ng-if="((pagecontext == 'fullpackageview') || (pagecontext == 'servicelevel')) && false">
+    <div class="col-sm-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Coverage</div>
+            <div class="panel-body">
+                <coveragesummary/>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <div class="col-sm-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Packages</div>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th ng-if="(pagecontext == 'fullpackageview')">Coverage (Elements)</th>
+                            <th ng-if="(pagecontext == 'servicelevel')">Coverage (Services)</th>
+                        </tr>
+                    </thead>
+                    <tr ng-repeat="x in overallsummary.packagesfilter">
+                        <td class="col-md-2">{{ $index + 1 }}</td>
+                        <td class="col-md-7">
+                            <packagesummarydisplaytext/>
+                        </td>
+                        <td class="col-md-4">
+                            <packagesummarypercentage/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-sm-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Test Suites</div>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Test Count</th>
+                        </tr>
+                    </thead>
+                    <tr ng-repeat="x in overallsummary.testSuites">
+                        <td class="col-md-2">{{ $index + 1 }}</td>
+                        <td class="col-md-8">
+                            <suitesummarydisplaytext/>
+                        </td>
+                        <td class="col-md-2">
+                            <testcountsummarydisplaytext/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

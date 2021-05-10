@@ -1,0 +1,304 @@
+.grid {
+    width: 100%;
+    min-height: 660px;
+  }
+
+  h2 {
+    cursor: default;
+  }
+
+  .ui-grid-top-panel {
+    background-color: #0899CC !important;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 20px;
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+  }
+
+  .ui-grid-row:nth-child(odd) .ui-grid-cell {
+    background-color: #fdfdfd;
+  }
+  .ui-grid-row:nth-child(even) .ui-grid-cell {
+    background-color: #fdfdfd;
+  }
+
+  .ui-grid-row.ui-grid-row-selected > [ui-grid-row] > .ui-grid-cell {
+    background-color: #91cae8;
+  }
+
+  .ui-grid-tree-header-row {
+    font-weight:  normal !important;
+  }
+
+
+
+.sag-web-component .panel-default > .panel-heading {
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+    background-color: #0899CC;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+
+
+.sag-web-component .panel-body {
+  padding: 15px;
+  height: 280px;
+  min-height: 280px;
+  max-height: 280px;
+  overflow-y: scroll;
+}
+
+
+.sag-web-component .panel-summary {
+  margin-bottom: 20px;
+  background-color: #fff;
+  border: 1.5px solid rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  cursor: default;
+}
+
+
+.sag-web-component .panel-summary > .panel-heading {
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+  background-color: #0899CC;
+  border-color: #ddd;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 10px;
+}
+
+
+
+.sag-web-component .panel-summary > .panel-body {
+padding: 15px;
+height: 100px;
+min-height: 50px;
+max-height: 100px;
+overflow-y: hidden;
+line-height: 4.5;
+}
+
+
+.col-with-divider div[class*="col-"] {
+  border-left: solid 1px #ddd; 
+}
+  
+.col-with-divider div[class*="col-"]:first-child {
+  border: 0 none; 
+}
+
+.no-margins {
+  margin: 0 !important;
+  padding-left: 5%; 
+}
+
+.stack-order {
+  position: relative;
+  z-index: 5; 
+}
+/* .panel-summary > .panel-body > .stack-order  > .no-margins
+.panel-summary > .panel-body > .col-with-divider > .stack-order  > .no-margins {
+  font-size: 2.2rem;
+} */
+
+.panel-body-summary-header-no {
+  font-size: 2.2rem;
+}
+
+.panel-body-summary-header-no-percent {
+  font-size: 2.2rem;
+  white-space: nowrap;
+  padding-bottom: 15px;
+}
+
+
+.small-inline-desc {
+  /*height: 0px;
+  width: 100%;
+  left: 1%;
+  padding: 30px 0 5px 0; 
+  bottom: 1%;*/
+  position: absolute;
+}
+
+
+.ispackage, .ispackage, .wmtests, .wmsuites, .wmmocks, .wmservices {
+	height: 42px;
+	width: 48px;
+	position: absolute;
+	right: 5%;
+  bottom: 35%;
+}
+
+
+.ispackage {
+  background: url(../images/package.gif) no-repeat;
+  background-size: 32px;
+}
+
+.wmtests {
+  background: url(../images/run_all_coverage.png) no-repeat;
+  background-size: 32px;
+}
+
+.wmsuites {
+  background: url(../images/testsuite.gif) no-repeat;
+  background-size: 32px;
+}
+
+.wmmocks {
+  background: url(../images/mock.gif) no-repeat;
+  background-size: 32px;
+}
+
+.wmservices {
+  background: url(../images/ns_java.gif) no-repeat;
+  background-size: 32px;
+}
+
+
+displaytext {
+  width: 90%;
+  font-size: 14px;
+  padding-top: 5px;
+}
+
+testsummarypercentage
+packagesummarypercentage {
+  width: 100%;
+}
+
+testservicesummarydisplaytext {
+  font-size: 14px;
+   padding-top: 5px;
+}
+
+
+testservicesummarydisplaytext
+testsummarypercentage
+testcountsummarydisplaytext
+suitesummarydisplaytext
+packagesummarypercentage
+packagesummarydisplaytext
+coveragesummarypercent {
+  cursor: default;
+}
+
+percentageelem {
+  width: 90%;
+}
+
+percentageelem > div {
+  padding-top: 5px;
+}
+
+
+.list-group-item {
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+  margin-bottom: -1px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  color: #000;
+  text-align: left;
+  font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
+  font-size: 12px;
+}
+
+.tooltip-inner {
+  max-width: 600px;
+  border: #000;
+  border-width: 2px;
+  padding: 2px 2px;
+  color: #000;
+  text-align: left;
+  text-decoration: none;
+  background-color: #fff;
+  border-radius: 1px;
+}
+
+
+
+.sag-web-component .table > thead > tr > th, 
+.sag-web-component .table > thead > tr > td, 
+.sag-web-component .table > tbody > tr > th, 
+.sag-web-component .table > tbody > tr > td, 
+.sag-web-component .table > tfoot > tr > th, 
+.sag-web-component .table > tfoot > tr > td {
+  padding: 5px 20px 5px 5px ;
+  word-wrap: break-word;
+  min-width: 2px;
+  max-width: 15px;
+  white-space: normal;
+}
+
+
+
+.sag-web-component .col-md-1 {
+    width: 6.16666%;
+}
+
+.sag-web-component .col-md-2 {
+  width: 12.3333%;
+}
+
+
+
+
+
+/* navbar custom*/
+.navbar-custom {
+  background-color:#0899CC;
+  color:#ffffff;
+  border-radius:0;
+}
+
+.navbar-custom .navbar-nav > li > a {
+  color:#fff;
+}
+
+.navbar-custom .navbar-nav > .active > a {
+  color: #ffffff;
+  background-color:transparent;
+}
+
+.navbar-custom .navbar-nav > li > a:hover,
+.navbar-custom .navbar-nav > li > a:focus,
+.navbar-custom .navbar-nav > .active > a:hover,
+.navbar-custom .navbar-nav > .active > a:focus,
+.navbar-custom .navbar-nav > .open >a {
+  text-decoration: none;
+  background-color: #0899CC;
+}
+
+.navbar-custom .navbar-brand {
+  color:#eeeeee;
+}
+.navbar-custom .navbar-toggle {
+  background-color:#eeeeee;
+}
+.navbar-custom .icon-bar {
+  background-color:#0899CC;
+}
+
+/* for dropdowns only */
+.navbar-custom .navbar-nav .dropdown-menu  { 
+  background-color: #0899CC;
+}
+.navbar-custom .navbar-nav .dropdown-menu>li>a  { 
+  color: #fff;
+}
+.navbar-custom .navbar-nav .dropdown-menu>li>a:hover,.navbar-custom .navbar-nav .dropdown-menu>li>a:focus  { 
+  color: #0899CC;
+}

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><DeployerSpec exitOnError="true" sourceType="Repository">
+	<DeployerServer>
+	<host>%%HOST%%:%%PORT%%</host>
+	<user>%%USERID%%</user>
+	<pwd>%%PWD%%</pwd>
+	<!-- <pwdHandle>$(PasswordHandle)</pwdHandle> -->
+</DeployerServer>
+<Environment>
+	<Repository>
+		<repalias name="Deployment_Repository">
+			<type>FlatFile</type> 
+			<urlOrDirectory>%%OUTPUT%%</urlOrDirectory>
+			<Test>false</Test>
+		</repalias>
+	</Repository>
+	<IS>
+		<isalias name="Deployment_IS">
+			<host>%%HOST%%</host>
+			<port>%%PORT%%</port>
+			<user>%%USERID%%</user>
+			<pwd>%%PWD%%</pwd>
+			<!-- <pwdHandle>$(PasswordHandle)</pwdHandle> -->
+			<useSSL>%%USESSL%%</useSSL>
+			<installDeployerResource>false</installDeployerResource>
+			<Test>false</Test>
+			<executeACL>Internal</executeACL>
+		</isalias>
+	</IS>
+</Environment>
+<Projects projectPrefix="">
+	<Project description="Deployment_Project" name="Deployment_Project" overwrite="true" type="Repository">
+		<ProjectProperties>
+			<Property name="projectLocking">false</Property>
+			<Property name="concurrentDeployment">true</Property>
+			<Property name="ignoreMissingDependencies">true</Property>
+			<Property name="isTransactionalDeployment">true</Property>
+		</ProjectProperties>
+		<DeploymentSet autoResolve="ignore" description="Deployment_Set" name="Deployment_Set" srcAlias="Deployment_Repository">
+			<Composite name="*" srcAlias="Deployment_Repository" type="IS"/>
+		</DeploymentSet>
+		<DeploymentMap description="Deployment_Map" name="Deployment_Map"/>
+			<MapSetMapping mapName="Deployment_Map" setName="Deployment_Set">
+				<alias type="IS">Deployment_IS</alias>
+			</MapSetMapping>
+		<DeploymentCandidate description="Deployment_Candidate" mapName="Deployment_Map" name="Deployment_Candidate"/>
+	</Project>
+</Projects>
+</DeployerSpec>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+    <title>wM Code Coverage Report</title>
+    <link rel="icon" href="data:,">
+
+    <script src="js/forEach.js"></script>
+    <script src="js/includes.js"></script>
+
+
+    <link rel="stylesheet" href="css/ext/ui-grid-4.2.4/ui-grid.min.css">
+    <link rel="stylesheet" href="css/ext/bootstrap-3.3.1/bootstrap.min.css">
+
+    <link rel="stylesheet" href="css/ext/sag_web/sag-web-components.min.css">
+    <link rel="stylesheet" href="css/utf-code-coverage.css">
+
+    <script src="js/ext/angular-1.6.4/angular.min.js"></script>
+    <script src="js/ext/angular-1.6.4/angular-route.min.js"></script>
+    <script src="js/ext/angular-1.6.4/angular-touch.min.js"></script>
+    <script src="js/ext/angular-1.6.4/angular-animate.min.js"></script>
+
+    <script src="js/ext/jquery-3.1.1/jquery.min.js"></script>
+    <script src="js/ext/bootstrap-3.3.1/bootstrap.min.js"></script>
+    <script src="js/ext/ui-grid-4.2.4/ui-grid.min.js"></script>
+
+
+    <script src="js/ext/sag_web/sag-web-components.min.js"></script>
+
+    <script src="js/sag-utf-data-router-1.js"></script>
+    <script src="js/sag-utf-router-1.js"></script>
+    <script src="js/sag-utf-data-service-1.js"></script>
+    <script src="js/sag-utf-cell-directives-1.js"></script>
+
+
+</head>
+
+<body>
+    <script>
+        var footeropt = {
+            copyrightText: 'Copyright (c) 2020 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or its subsidiaries and/or its affiliates and/or their licensors.',
+            footerLogoSrc: 'images/sag-footer.png'
+        }
+    </script>
+    <sag-page ng-app="app">
+        <div data-ng-include="'partialView/shellHeader.html'"></div>
+        <div class="container-fluid">
+            <div data-ng-view style="margin-top: 10px"></div>
+        </div>
+        <sag-footer options=footeropt></sag-footer>
+        <!--div data-ng-include="'partialView/shellFooter.html'"></div-->
+    </sag-page>
+</body>
+
+</html>

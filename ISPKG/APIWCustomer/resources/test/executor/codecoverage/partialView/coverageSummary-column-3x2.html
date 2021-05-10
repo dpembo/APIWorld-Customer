@@ -1,0 +1,28 @@
+<div class="col-sm-2">
+    <div class="panel panel-summary" ng-if="(pagecontext == 'fullpackageview') || (pagecontext == 'servicelevel')">
+        <div class="panel-heading">Packages</div>
+        <div class="panel-body">
+            <div class="stack-order">
+                <h2 class="no-margins">
+                    <div class="panel-body-summary-header-no">{{overallsummary.packagesfilter.length}}</div>
+                </h2>
+                <small>Packages in Code Coverage Scope.</small>
+            </div>
+            <div class="ispackage"></div>
+
+        </div>
+    </div>
+
+    <div class="panel panel-summary" ng-if="(pagecontext == 'executionmodel') || (pagecontext == 'mockDetails')">
+        <div class="panel-heading">Suites</div>
+        <div class="panel-body">
+            <div class="stack-order">
+                <h2 class="no-margins">
+                    <div class="panel-body-summary-header-no">{{overallsummary.testSuites.length}}</div>
+                </h2>
+                <small>TestSuites executed in this build.</small>
+            </div>
+            <div class="wmsuites"></div>
+        </div>
+    </div>
+</div>
