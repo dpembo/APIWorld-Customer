@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webMethodsTestSuite description="" name="APIWorld Customer Tests">
+    <webMethodsTestCase description="Top level service" name="Customer List Returned">
+        <service folder="com.softwareag.customer.pub" name="getCustomer">
+            <input>
+                <file/>
+            </input>
+            <expected>
+                <file/>
+                <field operator=">" path="count(//customers)" value="0"/>
+            </expected>
+        </service>
+    </webMethodsTestCase>
+</webMethodsTestSuite>

@@ -1,0 +1,10 @@
+api_gateway:
+   url: http://[gateway]/rest/apigateway
+   user: Administrator
+   password: "manage"
+---
+
+aliases:
+  MicroServiceAlias:
+    type: simple
+    value: http://[microservice]
