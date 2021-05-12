@@ -179,7 +179,11 @@ cd MSR-Image
 cd ISPKG/APIWCustomer/resources/test/executor
 ant -buildfile run-test-suites.xml
 #cd /home/ukdxp/WmBuildTools
-#ant -buildfile build-test.xml -Denv.WEBMETHODS_HOME=/home/ukdxp/107/wMServiceDesigner'''
+#ant -buildfile build-test.xml -Denv.WEBMETHODS_HOME=/home/ukdxp/107/wMServiceDesigner
+
+mkdir ${WORKSPACE}/test-results
+cp -r ./tests/reports ${WORKSPACE}/test-results
+'''
           }
         }
         stage('Interface Test') {
