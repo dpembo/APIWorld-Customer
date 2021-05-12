@@ -187,7 +187,7 @@ ant -buildfile run-test-suites.xml
 #ant -buildfile build-test.xml -Denv.WEBMETHODS_HOME=/home/ukdxp/107/wMServiceDesigner
 
 mkdir ${WORKSPACE}/test-results
-cp -r ./test/reports ${WORKSPACE}/test-results
+cp -r ./test/reports/ ${WORKSPACE}/test-results
 '''
           }
         }
@@ -345,7 +345,7 @@ docker volume prune -f
   }
   post {
     always {
-      junit './MSR-Image/ISPKG/APIWCustomer/resources/test/**/*.xml'
+      junit '${WORKSPACE}/test-results/*.xml'
 
     }
 
