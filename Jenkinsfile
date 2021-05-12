@@ -351,6 +351,11 @@ pwd'''
   }
   post {
     always {
+      perfReport(sourceDataFiles: 'jmeter/result.jtl', compareBuildPrevious: true, errorUnstableResponseTimeThreshold: '5000')
+      archiveArtifacts(artifacts: 'jmeter/result.*', fingerprint: true)
+      archiveArtifacts(artifacts: 'APIWCustomer__CodeReviewReport*.*', fingerprint: true)
+      archiveArtifacts(artifacts: 'ISCCR.log', fingerprint: true)
+      archiveArtifacts(artifacts: 'test-results/**/*.*', fingerprint: true)
       junit 'test-results/**/*.xml'
 
     }
