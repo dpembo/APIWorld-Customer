@@ -173,9 +173,13 @@ docker run --rm --name jmeter --volume $WORKSPACE/jmeter/:/mnt/jmeter vmarrazzo/
         stage('Unit Test') {
           steps {
             sh '''#Unit Test Microservice
-exit 0
 echo "Unit Test Microservice"
-docker run --rm --name service-maven -v "$PWD":/usr/share/mymaven -v "$HOME/.m2":/root/.m2 -v "$PWD"/target:/usr/share/mymaven/target -w /usr/share/mymaven maven:3.6-jdk-8 mvn test'''
+pwd
+#cd MSR-Image
+#cd ISPKG/APIWCustomer/resources/test/executor
+#ant -buildfile run-test-suites.xml
+cd /home/ukdxp/WmBuildTools
+ant -buildfile build-test.xml -Denv.WEBMETHODS_HOME=/home/ukdxp/107/wMServiceDesigner'''
           }
         }
         stage('Interface Test') {
@@ -332,9 +336,7 @@ docker volume prune -f
   }
   post {
     always {
-      junit 'target/surefire-reports/**/*.xml'
-      perfReport(sourceDataFiles: 'jmeter/result.jtl', compareBuildPrevious: true, errorUnstableResponseTimeThreshold: '5000')
-      archiveArtifacts(artifacts: 'jmeter/result.*', fingerprint: true)
+      junit '/var/lib/jenkins/workspace/APIWorld-Customer_Development/MSR-Image/ISPKG/APIWCustomer/resources/test/executor/test/reports/*.xml'
 
     }
 
