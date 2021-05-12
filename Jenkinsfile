@@ -182,7 +182,7 @@ ant -buildfile run-test-suites.xml
 #ant -buildfile build-test.xml -Denv.WEBMETHODS_HOME=/home/ukdxp/107/wMServiceDesigner
 
 mkdir ${WORKSPACE}/test-results
-cp -r ./tests/reports ${WORKSPACE}/test-results
+cp -r ./test/reports ${WORKSPACE}/test-results
 '''
           }
         }
