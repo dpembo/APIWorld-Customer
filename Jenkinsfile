@@ -175,11 +175,11 @@ docker run --rm --name jmeter --volume $WORKSPACE/jmeter/:/mnt/jmeter vmarrazzo/
             sh '''#Unit Test Microservice
 echo "Unit Test Microservice"
 pwd
-#cd MSR-Image
-#cd ISPKG/APIWCustomer/resources/test/executor
-#ant -buildfile run-test-suites.xml
-cd /home/ukdxp/WmBuildTools
-ant -buildfile build-test.xml -Denv.WEBMETHODS_HOME=/home/ukdxp/107/wMServiceDesigner'''
+cd MSR-Image
+cd ISPKG/APIWCustomer/resources/test/executor
+ant -buildfile run-test-suites.xml
+#cd /home/ukdxp/WmBuildTools
+#ant -buildfile build-test.xml -Denv.WEBMETHODS_HOME=/home/ukdxp/107/wMServiceDesigner'''
           }
         }
         stage('Interface Test') {
