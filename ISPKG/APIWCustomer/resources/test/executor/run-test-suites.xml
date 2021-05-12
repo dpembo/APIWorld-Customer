@@ -79,7 +79,7 @@ You can update/modify "runall-test" target to exclude/include test suite package
 
 		<antcall target="start-is" />
 		
-		<ant dir="deployer" antfile="build-deploy.xml" target="build-deploy"/>
+		<!--<ant dir="deployer" antfile="build-deploy.xml" target="build-deploy"/>-->
 		
 		<antcontrib:for list="${webMethods.projects.filter}" delimiter=";" param="val">
 			<sequential>
@@ -410,8 +410,8 @@ You can update/modify "runall-test" target to exclude/include test suite package
 	</target>
 
 	<target name="start-is">
-		<antcall target="start-is-win"/>
-		<antcall target="start-is-unix"/>
+		<!--<antcall target="start-is-win"/>
+		<antcall target="start-is-unix"/>-->
 	</target>
 	<target name="start-is-unix" description="Starts the webMethods Integration Server, if not running"
 		        depends="check-is-started" unless="is.server.running" if="${isUnix}">
