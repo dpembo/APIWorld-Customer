@@ -48,6 +48,8 @@ echo "Clean Build Assets"
 rm -rf target
 rm -rf jmeter
 
+mkdir ${WORKSPACE}/test-results
+
 '''
           }
         }
@@ -61,7 +63,9 @@ rm -rf jmeter
     }
     stage('Quality Review') {
       steps {
-        sh '/home/ukdxp/GCS_IS_ContinuousCodeReview_v7.1.0/CodeReview.sh -Dcode.review.pkgname=APIWCustomer -Dcode.review.pkgprefix=APIW -Dcode.review.folder-prefix=com.softwareag -Dcode.review.directory=$WORKSPACE/ISPKG'
+        sh '''/home/ukdxp/GCS_IS_ContinuousCodeReview_v7.1.0/CodeReview.sh -Dcode.review.pkgname=APIWCustomer -Dcode.review.pkgprefix=APIW -Dcode.review.folder-prefix=com.softwareag -Dcode.review.directory=$WORKSPACE/ISPKG
+
+cp APIWCustomer__CodeReviewReport__junit.xml ./test-results/'''
       }
     }
     stage('Build') {
@@ -186,7 +190,7 @@ ant -buildfile run-test-suites.xml
 #cd /home/ukdxp/WmBuildTools
 #ant -buildfile build-test.xml -Denv.WEBMETHODS_HOME=/home/ukdxp/107/wMServiceDesigner
 
-mkdir ${WORKSPACE}/test-results
+
 cp -r ./test/reports/ ${WORKSPACE}/test-results
 '''
           }
