@@ -129,14 +129,19 @@ docker build -t customermg:$VERSION .
             sh '''#Run the container read for testing
 
 docker run --rm --name customerservicems -d -p 8090:5555 customerservice:$VERSION
-'''
+
+
+#Are services operational
+timeout 60 bash -c \'while [[ "$(curl -u Administrator:manage -s -o /dev/null -w \'\'%{http_code}\'\' localhost:8090/restv2/com.softwareag.customer.pub:customer/customer)" != "200" ]]; do sleep 5; done\' || false'''
           }
         }
         stage('Start MicroGW') {
           steps {
             sh '''#Run MicroGateway Container
 docker run --rm --name customermg -d -p 9090:9090 --net=host customermg:$VERSION
-'''
+
+#Is MicroGW Operational
+timeout 60 bash -c \'while [[ "$(curl -s -o /dev/null -w \'\'%{http_code}\'\' localhost:9090/gateway/Customer/1.0/customer)" != "200" ]]; do sleep 5; done\' || false'''
           }
         }
       }
@@ -146,14 +151,14 @@ docker run --rm --name customermg -d -p 9090:9090 --net=host customermg:$VERSION
         stage('Test MicroSvc Operational') {
           steps {
             sh '''#Are services operational
-timeout 60 bash -c \'while [[ "$(curl -u Administrator:manage -s -o /dev/null -w \'\'%{http_code}\'\' localhost:8090/restv2/com.softwareag.customer.pub:customer/customer)" != "200" ]]; do sleep 5; done\' || false
+#timeout 60 bash -c \'while [[ "$(curl -u Administrator:manage -s -o /dev/null -w \'\'%{http_code}\'\' localhost:8090/restv2/com.softwareag.customer.pub:customer/customer)" != "200" ]]; do sleep 5; done\' || false
 '''
           }
         }
         stage('Test MicroGW Operational') {
           steps {
             sh '''#Is MicroGW Operational
-timeout 60 bash -c \'while [[ "$(curl -s -o /dev/null -w \'\'%{http_code}\'\' localhost:9090/gateway/Customer/1.0/customer)" != "200" ]]; do sleep 5; done\' || false'''
+#timeout 60 bash -c \'while [[ "$(curl -s -o /dev/null -w \'\'%{http_code}\'\' localhost:9090/gateway/Customer/1.0/customer)" != "200" ]]; do sleep 5; done\' || false'''
           }
         }
       }
