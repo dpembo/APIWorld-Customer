@@ -339,13 +339,15 @@ fi
 docker image prune -f
 docker volume prune -f
 
-'''
+
+#current dir
+pwd'''
       }
     }
   }
   post {
     always {
-      junit './test-results/**/*.xml'
+      junit 'test-results/**/*.xml'
 
     }
 
