@@ -198,9 +198,9 @@ cp -r ./test/reports/ ${WORKSPACE}/test-results
           steps {
             echo 'Test Microservice'
             sh '''#Test Microservice
-exit 0
+
 curl http://apiworldbuild:8090/product/1
-test=`curl -s http://apiworldbuild:8090/product/1 | grep foo | wc -l`
+test=`curl -s http://apiworldbuild:8090//restv2/com.softwareag.customer.pub:customer/customer | grep Pemberton | wc -l`
 
 
 if [ $test -gt 0 ]; then
