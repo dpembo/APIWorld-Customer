@@ -175,7 +175,7 @@ timeout 60 bash -c \'while [[ "$(curl -s -o /dev/null -w \'\'%{http_code}\'\' lo
 rm -rf jmeter
 mkdir jmeter
 mkdir jmeter/output
-cp src/main/loadtest.jmx jmeter/
+cp MSR-Image/ISPKG/APIWCustomer/resources/test/setup/loadtest.jmx jmeter/
 docker run --rm --name jmeter --volume $WORKSPACE/jmeter/:/mnt/jmeter vmarrazzo/jmeter:latest -n -t /mnt/jmeter/loadtest.jmx -l /mnt/jmeter/result.jtl -j /mnt/jmeter/result.log -e -o /mnt/jmeter/output'''
           }
         }
