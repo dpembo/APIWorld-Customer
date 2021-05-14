@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <webMethodsTestSuite description="" name="APIWorld Customer Tests">
-    <webMethodsTestCase description="Top level service" name="Customer List Returned">
+    <webMethodsTestCase description="Returns a customer list&#xa;" name="Customer List Returned">
         <service folder="com.softwareag.customer.pub" name="getCustomer">
             <input>
                 <file/>

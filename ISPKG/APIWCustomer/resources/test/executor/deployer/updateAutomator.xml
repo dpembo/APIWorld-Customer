@@ -1,0 +1,11 @@
+<project name="update" default="update-file" basedir=".">
+	<property file="${basedir}/config.cnf"/>
+	<target name="update-file">
+		<replace file="Deployment_ProjectAutomator.xml" token="%%OUTPUT%%" value="${build.output.dir}"/>
+		<replace file="Deployment_ProjectAutomator.xml" token="%%HOST%%" value="${host}"/>
+		<replace file="Deployment_ProjectAutomator.xml" token="%%PORT%%" value="${port}"/>
+		<replace file="Deployment_ProjectAutomator.xml" token="%%PWD%%" value="${pwd}"/>
+		<replace file="Deployment_ProjectAutomator.xml" token="%%USERID%%" value="${user}"/>
+		<replace file="Deployment_ProjectAutomator.xml" token="%%USESSL%%" value="${useSSL}"/>
+	</target>
+</project>

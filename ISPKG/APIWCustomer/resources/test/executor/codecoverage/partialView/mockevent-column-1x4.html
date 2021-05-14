@@ -1,0 +1,31 @@
+<div ng-if="(pagecontext == 'mockDetails')">
+    <div class="col-sm-2">
+        <div class="panel panel-summary">
+            <div class="panel-heading">Mock Event</div>
+            <div class="panel-body">
+                <div class="stack-order">
+                    <h2 class="no-margins">
+                        <div class="panel-body-summary-header-no">{{overallsummary.totalmockevent}}</div>
+                    </h2>
+                    <small>Total Mock Events created</small>
+                </div>
+                <div class="wmmocks"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-sm-2" ng-if="(pagecontext == 'mockDetails')">
+        <div class="panel panel-summary">
+            <div class="panel-heading">Mocked Services</div>
+            <div class="panel-body">
+                <div class="stack-order">
+                    <h2 class="no-margins">
+                        <div class="panel-body-summary-header-no">{{overallsummary.uniqueServiceNameCount}}</div>
+                    </h2>
+                    <small>Count of unique Mocked Service</small>
+                </div>
+                <div class="wmservices"></div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -48,6 +48,8 @@ echo "Clean Build Assets"
 rm -rf target
 rm -rf jmeter
 
+mkdir ${WORKSPACE}/test-results
+
 '''
           }
         }
@@ -61,7 +63,9 @@ rm -rf jmeter
     }
     stage('Quality Review') {
       steps {
-        sh '/home/ukdxp/GCS_IS_ContinuousCodeReview_v7.1.0/CodeReview.sh -Dcode.review.pkgname=APIWCustomer -Dcode.review.pkgprefix=APIW -Dcode.review.folder-prefix=com.softwareag -Dcode.review.directory=$WORKSPACE/ISPKG'
+        sh '''/home/ukdxp/GCS_IS_ContinuousCodeReview_v7.1.0/CodeReview.sh -Dcode.review.pkgname=APIWCustomer -Dcode.review.pkgprefix=APIW -Dcode.review.folder-prefix=com.softwareag -Dcode.review.directory=$WORKSPACE/ISPKG
+
+cp APIWCustomer__CodeReviewReport__junit.xml ./test-results/'''
       }
     }
     stage('Build') {
@@ -110,8 +114,9 @@ cd /opt/softwareag/microgateway
         sh '''#Containerize Microservice
 
 
-
+pwd
 cd MSR-Image
+ls -al
 
 docker build -t customerservice:$VERSION .
 '''
@@ -128,14 +133,19 @@ docker build -t customermg:$VERSION .
             sh '''#Run the container read for testing
 
 docker run --rm --name customerservicems -d -p 8090:5555 customerservice:$VERSION
-'''
+
+
+#Are services operational
+timeout 60 bash -c \'while [[ "$(curl -u Administrator:manage -s -o /dev/null -w \'\'%{http_code}\'\' localhost:8090/restv2/com.softwareag.customer.pub:customer/customer)" != "200" ]]; do sleep 5; done\' || false'''
           }
         }
         stage('Start MicroGW') {
           steps {
             sh '''#Run MicroGateway Container
 docker run --rm --name customermg -d -p 9090:9090 --net=host customermg:$VERSION
-'''
+
+#Is MicroGW Operational
+timeout 60 bash -c \'while [[ "$(curl -s -o /dev/null -w \'\'%{http_code}\'\' localhost:9090/gateway/Customer/1.0/customer)" != "200" ]]; do sleep 5; done\' || false'''
           }
         }
       }
@@ -145,14 +155,14 @@ docker run --rm --name customermg -d -p 9090:9090 --net=host customermg:$VERSION
         stage('Test MicroSvc Operational') {
           steps {
             sh '''#Are services operational
-timeout 60 bash -c \'while [[ "$(curl -u Administrator:manage -s -o /dev/null -w \'\'%{http_code}\'\' localhost:8090/restv2/com.softwareag.customer.pub:customer/customer)" != "200" ]]; do sleep 5; done\' || false
+#timeout 60 bash -c \'while [[ "$(curl -u Administrator:manage -s -o /dev/null -w \'\'%{http_code}\'\' localhost:8090/restv2/com.softwareag.customer.pub:customer/customer)" != "200" ]]; do sleep 5; done\' || false
 '''
           }
         }
         stage('Test MicroGW Operational') {
           steps {
             sh '''#Is MicroGW Operational
-timeout 60 bash -c \'while [[ "$(curl -s -o /dev/null -w \'\'%{http_code}\'\' localhost:9090/gateway/Customer/1.0/customer)" != "200" ]]; do sleep 5; done\' || false'''
+#timeout 60 bash -c \'while [[ "$(curl -s -o /dev/null -w \'\'%{http_code}\'\' localhost:9090/gateway/Customer/1.0/customer)" != "200" ]]; do sleep 5; done\' || false'''
           }
         }
       }
@@ -161,41 +171,47 @@ timeout 60 bash -c \'while [[ "$(curl -s -o /dev/null -w \'\'%{http_code}\'\' lo
       parallel {
         stage('Load Test') {
           steps {
-            sh '''exit 0
-rm -rf jmeter
+            sh '''rm -rf jmeter
 mkdir jmeter
 mkdir jmeter/output
-cp src/main/loadtest.jmx jmeter/
+cp MSR-Image/ISPKG/APIWCustomer/resources/test/setup/loadtest.jmx jmeter/
 docker run --rm --name jmeter --volume $WORKSPACE/jmeter/:/mnt/jmeter vmarrazzo/jmeter:latest -n -t /mnt/jmeter/loadtest.jmx -l /mnt/jmeter/result.jtl -j /mnt/jmeter/result.log -e -o /mnt/jmeter/output'''
           }
         }
         stage('Unit Test') {
           steps {
             sh '''#Unit Test Microservice
-exit 0
 echo "Unit Test Microservice"
-docker run --rm --name service-maven -v "$PWD":/usr/share/mymaven -v "$HOME/.m2":/root/.m2 -v "$PWD"/target:/usr/share/mymaven/target -w /usr/share/mymaven maven:3.6-jdk-8 mvn test'''
+pwd
+cd MSR-Image
+cd ISPKG/APIWCustomer/resources/test/executor
+ant -buildfile run-test-suites.xml
+#cd /home/ukdxp/WmBuildTools
+#ant -buildfile build-test.xml -Denv.WEBMETHODS_HOME=/home/ukdxp/107/wMServiceDesigner
+
+
+cp -r ./test/reports/ ${WORKSPACE}/test-results
+'''
           }
         }
         stage('Interface Test') {
           steps {
             echo 'Test Microservice'
             sh '''#Test Microservice
-exit 0
+
 curl http://apiworldbuild:8090/product/1
-test=`curl -s http://apiworldbuild:8090/product/1 | grep foo | wc -l`
+test=`curl -s -u Administrator:manage http://apiworldbuild:8090/restv2/com.softwareag.customer.pub:customer/customer | grep Pemberton | wc -l`
 
 
 if [ $test -gt 0 ]; then
    echo "Test Passed"
 else
-   echo "Error in interface test for MicroService"
+   echo "Error in interface test for Micro Service"
    exit 1
 fi'''
             echo 'Test Gateway'
             sh '''#Test Gateway
-exit 0
-test=`curl -s http://apiworldbuild:9090/gateway/Product/1.0/product/1 | grep foo | wc -l`
+test=`curl -s http://apiworldbuild:9090/gateway/Customer/1.0/customer | grep Pemberton | wc -l`
 
 
 if [ $test -gt 0 ]; then
@@ -325,15 +341,20 @@ fi
 docker image prune -f
 docker volume prune -f
 
-'''
+
+#current dir
+pwd'''
       }
     }
   }
   post {
     always {
-      junit 'target/surefire-reports/**/*.xml'
       perfReport(sourceDataFiles: 'jmeter/result.jtl', compareBuildPrevious: true, errorUnstableResponseTimeThreshold: '5000')
       archiveArtifacts(artifacts: 'jmeter/result.*', fingerprint: true)
+      archiveArtifacts(artifacts: 'APIWCustomer__CodeReviewReport*.*', fingerprint: true)
+      archiveArtifacts(artifacts: 'ISCCR.log', fingerprint: true)
+      archiveArtifacts(artifacts: 'test-results/**/*.*', fingerprint: true)
+      junit 'test-results/**/*.xml'
 
     }
 

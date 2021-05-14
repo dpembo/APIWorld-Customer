@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<project name="build-deploy" default="build-deploy" basedir=".">
+	<property file="../run-test-suites.properties" />
+	<property name="webMethods.projects.location" value="${basedir}/../.." />
+	<property name="sag.install.dir" value="${webMethods.home}" />
+	<property name="IS_DIR" value="${webMethods.home}/IntegrationServer" />
+	<property name="DEP_INSTANCE_PACKAGE" value="${IS_DIR}/packages/WmDeployer" />
+	<property name="COMMON" value="${webMethods.home}/common" />
+	<path id="classpath.webMethods">
+		<fileset dir="${IS_DIR}/lib">
+			<include name="wm-isserver.jar" />
+		</fileset>
+		<fileset dir="${DEP_INSTANCE_PACKAGE}/lib">
+			<include name="CLI.jar" />
+			<include name="projectautomator.jar" />
+		</fileset>
+		<pathelement location="${DEP_INSTANCE_PACKAGE}/code/classes" />
+		<fileset dir="${COMMON}/lib">
+			<include name="ext/commons-cli.jar" />
+			<include name="wm-isclient.jar" />
+			<include name="glassfish/gf.javax.mail.jar" />
+			<include name="ext/xml-apis.jar" />
+			<include name="ext/xercesImpl.jar" />
+			<include name="ext/log4j.jar" />
+			<include name="ext/enttoolkit.jar" />
+			<include name="wm-scg-security.jar" />
+			<include name="wm-scg-core.jar" />
+			<include name="wm-g11nutils.jar" />
+		</fileset>
+	</path>
+	<target name="check.deployer">
+		<condition property="deployer.installed">
+			<and>
+				<available type="dir" file="${webMethods.home}/common/AssetBuildEnvironment" />
+				<available type="dir" file="${DEP_INSTANCE_PACKAGE}" />
+			</and>
+		</condition>
+	</target>
+	<target name="build-deploy" depends="check.deployer" unless="is.server.running" if="${deployer.installed}">
+
+		<ant dir="." antfile="updateAutomator.xml" target="update-file">
+			<property name="build.output.dir" value="${basedir}/../output" />
+		</ant>
+		<mkdir dir="../output" />
+		<!--antcall target="assetsBuild"/-->
+
+		<ant dir="${webMethods.home}/common/AssetBuildEnvironment/master_build" antfile="build.xml" target="build">
+			<property name="build.output.dir" value="${basedir}/../output" />
+			<property name="build.source.dir" value="${webMethods.projects.location}" />
+			<property name="enable.build.IS" value="true" />
+		</ant>
+
+		<java classname="com.softwareag.webm.deployer.automation.MainClass" fork="yes">
+			<arg value="${basedir}/Deployment_ProjectAutomator.xml" />
+			<arg value="${DEP_INSTANCE_PACKAGE}/config/ProjectAutomatorForRuntime.xsd" />
+			<arg value="${DEP_INSTANCE_PACKAGE}/config/ProjectAutomatorForRepository.xsd" />
+			<arg value="${DEP_INSTANCE_PACKAGE}/bin/log4j.properties" />
+			<arg value="0" />
+			<jvmarg value="-Dserver.install.dir=${IS_DIR}/default" />
+			<classpath>
+				<path refid="classpath.webMethods" />
+			</classpath>
+		</java>
+		<java classname="com.wm.deployer.CLI.MainClass" fork="yes">
+			<arg value="--deploy" />
+			<arg value="-configfile" />
+			<arg value="${basedir}/config.cnf" />
+			<arg value="-project" />
+			<arg value="Deployment_Project" />
+			<arg value="-dc" />
+			<arg value="Deployment_Candidate" />
+			<arg value="-force" />
+			<classpath>
+				<path refid="classpath.webMethods" />
+				<pathelement location="${DEP_INSTANCE_PACKAGE}/bin" />
+				<pathelement location="${DEP_INSTANCE_PACKAGE}/bin/log4j.properties" />
+			</classpath>
+		</java>
+	</target>
+</project>

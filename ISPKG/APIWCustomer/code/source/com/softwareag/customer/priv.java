@@ -110,10 +110,10 @@ public final class priv
 		address = IDataFactory.create();
 		addressCursor = address.getCursor();
 		IDataUtil.put( addressCursor, "line1", "123 Letsbe Avenue" );
-		IDataUtil.put( addressCursor, "line2", "" );
-		IDataUtil.put( addressCursor, "line3", "" );
+		IDataUtil.put( addressCursor, "line2", "London" );
+		IDataUtil.put( addressCursor, "line3", "E1 1LL" );
 		IDataUtil.put( addressCursor, "line4", "" );
-		IDataUtil.put( addressCursor, "line5", "U" );
+		IDataUtil.put( addressCursor, "line5", "" );
 		addressCursor.destroy();
 		IDataUtil.put( contactCursor, "address", address );
 		contactCursor.destroy();

@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+
+<!--
+
+WmTestSuite Code coverage test run can be invoked in headless mode through ant target "composite-runner-all-tests". 
+This target is recommended for regular test execution as well.
+
+Target: composite-runner-all-tests (Recommended)
+====================================================================
+a. Composite Runner builds a single ParentRunner from all the specified WmTestSuite files. 
+b. Tests are executed through single Server connection and session.
+c. "WmTestSuite compatible" junit HTML report is generated.
+d. Supports Service Code Coverage analysis.
+e. Required ant properties specific to Code Coverage launch (Refer, generated run-test-suites.properties)
+	i) 		webMethods.test.setup.profile.mode=COVERAGE.
+	ii) 	webMethods.test.scope.packages= comma separated list of packages. This defines the scope and determines the coverage percentage.
+	iii)	webMethods.test.setup.location=comma separated list of project and suite locations. Input supports two formats:
+					Format 1: $AbsoluteProjectLocation1,$AbsoluteProjectLocation2 (implicitly searches all WmTestSuite files in all directories under specfied locations and execute)
+								Example: C:/SoftwareAG/IntegrationServer/instances/default/packages/SampleTestSuite,C:/_gitRepo/packages/SampleTestSuite1
+					Format 2: $AbsoluteProjectLocation1;$RelativeTestSuitePath1,$AbsoluteProjectLocation2;$RelativeTestSuitePath2 (executes only specified WmTestSuite files)
+								Example: C:/SoftwareAG/IntegrationServer/instances/default/packages/SampleTestSuite;resources/test/setup/wmTestSuite.xml,C:/_gitRepo/packages/SampleTestSuite1;resources/test/setup/wmTestSuite.xml
+f. Specify Code Coverage report location through webMethods.test.profile.result.location. Default is same location as junit test report directory.
+g. webMethods.test.setup.profile.mode=NONE for regular test execution, i.e. without Code Coverage reports.
+h. webMethods.test.setup.external.classpath.layout= this property suggests the inside packages directories, which the composite-runner appends in the classpath, so the referred classes, jars from the TestSuite can be loaded. 
+														Users can append to the default layour suggestions.
+-->
+
+<project name="WmTestSuite Runner Builder" default="composite-runner-all-tests" basedir="." xmlns:antcontrib="antlib:net.sf.antcontrib" xmlns:xmltask="antlib:com.oopsconsultancy.xmltask">
+	<description>WmTestSuite Composite Runner builder</description>
+
+	<property file="run-test-suites.properties" />
+	<property name="webMethods.test.profile.result.location" location="test/reports" />
+	<property name="test.reports.dir" location="${webMethods.test.profile.result.location}" />
+
+	<!-- SETUP CLASSPATHS AND OTHER REFERENCES -->
+	<path id="classpath.webMethods.package">
+		<fileset dir="${webMethods.package.dir}/code/jars">
+			<include name="**/*.jar" />
+		</fileset>
+		<pathelement location="${webMethods.package.dir}/code/classes" />
+		<pathelement location="${webMethods.package.dir}/resources/test/classes" />
+	</path>
+	<path id="classpath.webMethods">
+		<path refid="classpath.webMethods.package" />
+	</path>
+	<path id="classpath.testsuite">
+		<fileset dir="${webMethods.home}/common/lib/testsuite">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${webMethods.home}/common/lib/glassfish">
+			<include name="**/*jackson*.jar" />
+		</fileset>
+		<fileset dir="${webMethods.home}/common/lib/ext">
+			<include name="**/*jackson*.jar" />
+		</fileset>
+		<fileset file="${webMethods.home}/common/lib/ext/xml-apis.jar" />
+		<fileset file="${webMethods.home}/common/lib/wm-isclient.jar" />
+		<fileset file="${webMethods.home}/common/lib/ext/icu4j.jar" />
+		<fileset file="${webMethods.home}/common/lib/ext/enttoolkit.jar" />
+		<fileset file="${webMethods.home}/IntegrationServer/lib/wm-isserver.jar" />
+		<fileset file="${webMethods.home}/common/lib/wm-g11nutils.jar" />
+		<fileset file="${webMethods.home}/common/lib/glassfish/gf.jakarta.mail.jar" />
+		<fileset file="${webMethods.home}/common/lib/ant/ant-contrib-1.0b3.jar" />
+	</path>
+
+	<path id="classpath.all">
+		<path refid="classpath.testsuite" />
+	</path>
+
+
+	<!--
+		WmTestSuite Composite Runner
+		============================
+		Composite Runner builds a single ParentRunner from all the specified WmTestSuite files. 	
+	-->
+	<target name="composite-runner-all-tests" depends="validate-configuration">
+		<taskdef resource="net/sf/antcontrib/antcontrib.properties" uri="antlib:net.sf.antcontrib" classpathref="classpath.all" />
+		<taskdef uri="antlib:net.sf.antcontrib" resource="net/sf/antcontrib/antlib.xml" classpathref="classpath.all" />
+		<basename property="current.project" file="${basedir}" />
+
+		<delete dir="${test.reports.dir}" failonerror="false"/>
+		<mkdir dir="${test.reports.dir}" />
+   
+		<junit printsummary="yes" haltonfailure="no" fork="true" failureproperty="test:failure" showoutput="true" dir="${basedir}">
+			<jvmarg value="-DwebMethods.integrationServer.name=${webMethods.integrationServer.name}" />
+			<jvmarg value="-DwebMethods.integrationServer.port=${webMethods.integrationServer.port}" />
+			<jvmarg value="-DwebMethods.integrationServer.userid=${webMethods.integrationServer.userid}" />
+			<jvmarg value="-DwebMethods.integrationServer.password=${webMethods.integrationServer.password}" />
+			<jvmarg value="-DwebMethods.integrationServer.ssl=${webMethods.integrationServer.ssl}" />
+			<jvmarg value="-DwebMethods.test.setup.location=${webMethods.test.setup.location}" />
+			<jvmarg value="-DwebMethods.test.setup.profile.mode=${webMethods.test.setup.profile.mode}" />
+			<jvmarg value="-DwebMethods.test.scope.packages=${webMethods.test.scope.packages}" />
+			<jvmarg value="-DwebMethods.test.profile.result.location=${webMethods.test.profile.result.location}" />
+			<jvmarg value="-DwebMethods.test.setup.external.classpath.layout=${webMethods.test.setup.external.classpath.layout}" />
+
+			<classpath>
+				<path refid="classpath.all" />
+			</classpath>
+
+			<formatter type="plain" />
+			<formatter classname="com.softwareag.utf.runner.XMLJUnitResultFormatter" extension=".xml" />
+			<test name="com.softwareag.utf.runner.UTFSuiteCompositeRunner$init" haltonerror="false" haltonfailure="false" todir="${test.reports.dir}" />
+		</junit>
+
+		<junitreport todir="${test.reports.dir}">
+			<fileset dir="${test.reports.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${test.reports.dir}/html">
+				<param name="TITLE" expression="WmTestSuite Unit Test Results" />
+			</report>
+		</junitreport>
+
+	</target>
+
+
+	<target name="validate-configuration">
+		<condition property="webMethods.test.scope.packages.set" else="false">
+			<isset property="webMethods.test.scope.packages" />
+		</condition>
+		<condition property="webMethods.test.setup.location.set" else="false">
+			<isset property="webMethods.test.setup.location" />
+		</condition>
+
+		<fail message="Property &quot;webMethods.test.setup.location&quot; has no value. Specify in &quot;run-test-suites.properties&quot;">
+			<condition>
+				<or>
+					<equals arg1="${webMethods.test.setup.location}" arg2="" />
+				</or>
+			</condition>
+		</fail>
+		<fail message="For wM Code Coverage, the property &quot;webMethods.test.scope.packages&quot; is required to have comma separated IS package names. Specify in &quot;run-test-suites.properties&quot;">
+			<condition>
+				<or>
+					<and>
+						<equals arg1="${webMethods.test.setup.profile.mode}" arg2="COVERAGE" />
+						<equals arg1="${webMethods.test.scope.packages}" arg2="" />
+					</and>
+					<and>
+						<equals arg1="${webMethods.test.setup.profile.mode}" arg2="COVERAGE" />
+						<equals arg1="${webMethods.test.scope.packages.set}" arg2="false" />
+					</and>
+				</or>
+			</condition>
+		</fail>
+	</target>
+
+</project>

@@ -1,0 +1,39 @@
+<div class="row" ng-if="(pagecontext == 'executionmodel') && false">
+    <div class="col-sm-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Coverage</div>
+            <div class="panel-body">
+                Panel content
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">Tests</div>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Services (under Test)</th>
+                            <th>Coverage (Execution model)</th>
+                        </tr>
+                    </thead>
+                    <tr ng-repeat="x in overallsummary.flattentests">
+                        <td class="col-md-1">{{ $index + 1 }}</td>
+                        <td class="col-md-4">
+                            <testsummarydisplaytext/>
+                        </td>
+                        <td class="col-md-5">
+                            <testservicesummarydisplaytext>{{x[1]}}</testservicesummarydisplaytext>
+                        </td>
+                        <td class="col-md-3">
+                            <testsummarypercentage/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
