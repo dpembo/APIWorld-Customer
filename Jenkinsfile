@@ -236,12 +236,12 @@ fi'''
         sh '''#push image to registry
 
 #First tag
-docker tag productservice:$VERSION apiworldref:5000/productservice:$VERSION
-docker tag productmg:$VERSION apiworldref:5000/productmg:$VERSION
+docker tag customerservice:$VERSION apiworldref:5000/customerservice:$VERSION
+docker tag customermg:$VERSION apiworldref:5000/customermg:$VERSION
 
 #second push 
-docker push apiworldref:5000/productservice:$VERSION
-docker push apiworldref:5000/productmg:$VERSION'''
+docker push apiworldref:5000/customerservice:$VERSION
+docker push apiworldref:5000/customermg:$VERSION'''
       }
     }
     stage('Release To Test') {
