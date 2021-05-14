@@ -302,18 +302,18 @@ fi
         echo 'Release to Prod'
         sh '''#Release into production
 
-deployActive=`kubectl get deployments.apps | grep product-service-deployment | wc -l`
+deployActive=`kubectl get deployments.apps | grep customer-service-deployment | wc -l`
 
 
 if [ $deployActive -gt 0 ]; then
 
    echo "Perform Rolling Update"
    #Do a rolling update
-   kubectl set image deployment.v1.apps/product-service-deployment product-service=apiworldref:5000/productservice:$VERSION
-   kubectl set image deployment.v1.apps/product-service-deployment product-service-sidecar=apiworldref:5000/productmg:$VERSION
+   kubectl set image deployment.v1.apps/customer-service-deployment customer-service=apiworldref:5000/customerservice:$VERSION
+   kubectl set image deployment.v1.apps/customer-service-deployment customer-service-sidecar=apiworldref:5000/customermg:$VERSION
    
    #Now wait for deploy
-   kubectl rollout status deployment.v1.apps/product-service-deployment
+   kubectl rollout status deployment.v1.apps/customer-service-deployment
 else
    echo "NEW Deployment"
    #Inject the version                                            
