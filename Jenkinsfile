@@ -198,21 +198,20 @@ cp -r ./test/reports/ ${WORKSPACE}/test-results
           steps {
             echo 'Test Microservice'
             sh '''#Test Microservice
-exit 0
+
 curl http://apiworldbuild:8090/product/1
-test=`curl -s http://apiworldbuild:8090/product/1 | grep foo | wc -l`
+test=`curl -s -u Administrator:manage http://apiworldbuild:8090/restv2/com.softwareag.customer.pub:customer/customer | grep Pemberton | wc -l`
 
 
 if [ $test -gt 0 ]; then
    echo "Test Passed"
 else
-   echo "Error in interface test for MicroService"
+   echo "Error in interface test for Micro Service"
    exit 1
 fi'''
             echo 'Test Gateway'
             sh '''#Test Gateway
-exit 0
-test=`curl -s http://apiworldbuild:9090/gateway/Product/1.0/product/1 | grep foo | wc -l`
+test=`curl -s http://apiworldbuild:9090/gateway/Customer/1.0/customer | grep Pemberton | wc -l`
 
 
 if [ $test -gt 0 ]; then
@@ -237,12 +236,12 @@ fi'''
         sh '''#push image to registry
 
 #First tag
-docker tag productservice:$VERSION apiworldref:5000/productservice:$VERSION
-docker tag productmg:$VERSION apiworldref:5000/productmg:$VERSION
+docker tag customerservice:$VERSION apiworldref:5000/customerservice:$VERSION
+docker tag customermg:$VERSION apiworldref:5000/customermg:$VERSION
 
 #second push 
-docker push apiworldref:5000/productservice:$VERSION
-docker push apiworldref:5000/productmg:$VERSION'''
+docker push apiworldref:5000/customerservice:$VERSION
+docker push apiworldref:5000/customermg:$VERSION'''
       }
     }
     stage('Release To Test') {
@@ -303,18 +302,18 @@ fi
         echo 'Release to Prod'
         sh '''#Release into production
 
-deployActive=`kubectl get deployments.apps | grep product-service-deployment | wc -l`
+deployActive=`kubectl get deployments.apps | grep customer-service-deployment | wc -l`
 
 
 if [ $deployActive -gt 0 ]; then
 
    echo "Perform Rolling Update"
    #Do a rolling update
-   kubectl set image deployment.v1.apps/product-service-deployment product-service=apiworldref:5000/productservice:$VERSION
-   kubectl set image deployment.v1.apps/product-service-deployment product-service-sidecar=apiworldref:5000/productmg:$VERSION
+   kubectl set image deployment.v1.apps/customer-service-deployment customer-service=apiworldref:5000/customerservice:$VERSION
+   kubectl set image deployment.v1.apps/customer-service-deployment customer-service-sidecar=apiworldref:5000/customermg:$VERSION
    
    #Now wait for deploy
-   kubectl rollout status deployment.v1.apps/product-service-deployment
+   kubectl rollout status deployment.v1.apps/customer-service-deployment
 else
    echo "NEW Deployment"
    #Inject the version                                            
