@@ -1,2 +1,3 @@
-# JMeter generated Authorization file
-http://apiworldbuild:8090/	Administrator	manage			BASIC
+# JMeter generated Header file
+accept	application/json
+Authorization	Basic QWRtaW5pc3RyYXRvcjptYW5hZ2U=
