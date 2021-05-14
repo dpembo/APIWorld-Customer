@@ -200,19 +200,18 @@ cp -r ./test/reports/ ${WORKSPACE}/test-results
             sh '''#Test Microservice
 
 curl http://apiworldbuild:8090/product/1
-test=`curl -s http://apiworldbuild:8090//restv2/com.softwareag.customer.pub:customer/customer | grep Pemberton | wc -l`
+test=`curl -s -u Administrator:manage http://apiworldbuild:8090/restv2/com.softwareag.customer.pub:customer/customer | grep Pemberton | wc -l`
 
 
 if [ $test -gt 0 ]; then
    echo "Test Passed"
 else
-   echo "Error in interface test for MicroService"
+   echo "Error in interface test for Micro Service"
    exit 1
 fi'''
             echo 'Test Gateway'
             sh '''#Test Gateway
-exit 0
-test=`curl -s http://apiworldbuild:9090/gateway/Product/1.0/product/1 | grep foo | wc -l`
+test=`curl -s http://apiworldbuild:9090/gateway/Customer/1.0/customer | grep Pemberton | wc -l`
 
 
 if [ $test -gt 0 ]; then
