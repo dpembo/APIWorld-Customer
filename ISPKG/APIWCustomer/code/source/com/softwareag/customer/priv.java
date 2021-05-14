@@ -89,7 +89,7 @@ public final class priv
 		name = IDataFactory.create();
 		nameCursor = name.getCursor();
 		IDataUtil.put( nameCursor, "first", "John" );
-		IDataUtil.put( nameCursor, "middle", "Jo" );
+		IDataUtil.put( nameCursor, "middle", "Jason" );
 		IDataUtil.put( nameCursor, "surname", "Smith" );
 		nameCursor.destroy();
 		IDataUtil.put( customersCursor, "name", name );
