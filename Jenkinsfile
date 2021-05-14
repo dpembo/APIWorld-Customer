@@ -171,8 +171,7 @@ timeout 60 bash -c \'while [[ "$(curl -s -o /dev/null -w \'\'%{http_code}\'\' lo
       parallel {
         stage('Load Test') {
           steps {
-            sh '''exit 0
-rm -rf jmeter
+            sh '''rm -rf jmeter
 mkdir jmeter
 mkdir jmeter/output
 cp MSR-Image/ISPKG/APIWCustomer/resources/test/setup/loadtest.jmx jmeter/
