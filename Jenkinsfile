@@ -88,13 +88,13 @@ cp /home/ukdxp/msr-license/licenseKey.xml ./MSR-Image/'''
 
 if [ $GIT_BRANCH = "staging" ]; then
    sudo sed -i \'s/\\[gateway\\]/apiworldref\\:5555/g\' $WORKSPACE/microgateway/config.yml
-   sudo sed -i \'s/\\[microservice\\]/localhost\\:8090/g\' $WORKSPACE/microgateway/config.yml
+   sudo sed -i \'s/\\[microservice\\]/localhost\\:5555/g\' $WORKSPACE/microgateway/config.yml
    exit
 fi
 
 if [ $GIT_BRANCH = "master" ]; then
    sudo sed -i \'s/\\[gateway\\]/apiworldref\\:5555/g\' $WORKSPACE/microgateway/config.yml
-   sudo sed -i \'s/\\[microservice\\]/localhost\\:8090/g\' $WORKSPACE/microgateway/config.yml   
+   sudo sed -i \'s/\\[microservice\\]/localhost\\:5555/g\' $WORKSPACE/microgateway/config.yml   
    exit
 fi
 
