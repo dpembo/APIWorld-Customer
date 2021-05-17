@@ -14,8 +14,15 @@ spec:
     - name: http
       port: 9090
       nodePort: 30082
+<<<<<<< HEAD
+    - name: http
+      port: 8090
+      nodePort: 30092
+
+=======
     - name: ismsr
       port: 8090
       targetPort: 5555
       nodePort: 31082
+>>>>>>> branch 'Development' of https://github.com/dpembo/APIWorld-Customer.git
   type: NodePort
