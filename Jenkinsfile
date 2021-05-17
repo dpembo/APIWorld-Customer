@@ -81,32 +81,9 @@ echo Version is: $VERSION
 
 
 '''
-        sh '''echo "Move Package for Docker Build"
+        sh '''echo "Move Package and license for Docker Build"
 mv ./ISPKG/ ./MSR-Image/
 cp /home/ukdxp/msr-license/licenseKey.xml ./MSR-Image/'''
-        sh '''#Modify Alias depending on stage
-
-if [ $GIT_BRANCH = "staging" ]; then
-   sudo sed -i \'s/\\[gateway\\]/apiworldref\\:5555/g\' $WORKSPACE/microgateway/config.yml
-   sudo sed -i \'s/\\[microservice\\]/localhost\\:8090/g\' $WORKSPACE/microgateway/config.yml
-   exit
-fi
-
-if [ $GIT_BRANCH = "master" ]; then
-   sudo sed -i \'s/\\[gateway\\]/apiworldref\\:5555/g\' $WORKSPACE/microgateway/config.yml
-   sudo sed -i \'s/\\[microservice\\]/localhost\\:8090/g\' $WORKSPACE/microgateway/config.yml   
-   exit
-fi
-
-#Else assume its a development branch and set accordingly
-
-sudo sed -i \'s/\\[gateway\\]/apiworldbuild\\:5555/g\' $WORKSPACE/microgateway/config.yml
-sudo sed -i \'s/\\[microservice\\]/apiworldbuild\\:8090/g\' $WORKSPACE/microgateway/config.yml
-
-'''
-        sh '''#Build MicroGateway
-cd /opt/softwareag/microgateway
-./microgateway.sh createDockerFile --docker_dir . -p 9090 -a $WORKSPACE/microgateway/Customer.zip -dof ./Dockerfile -c $WORKSPACE/microgateway/config.yml'''
       }
     }
     stage('Containerize') {
@@ -120,51 +97,17 @@ ls -al
 
 docker build -t customerservice:$VERSION .
 '''
-        sh '''#Containerize Microgateway
-cd /opt/softwareag/microgateway
-docker build -t customermg:$VERSION .
-'''
       }
     }
-    stage('Deployment') {
-      parallel {
-        stage('Start MicroSvc') {
-          steps {
-            sh '''#Run the container read for testing
+    stage('Start MicroSvc') {
+      steps {
+        sh '''#Run the container read for testing
 
 docker run --rm --name customerservicems -d -p 8090:5555 customerservice:$VERSION
 
 
 #Are services operational
 timeout 60 bash -c \'while [[ "$(curl -u Administrator:manage -s -o /dev/null -w \'\'%{http_code}\'\' localhost:8090/restv2/com.softwareag.customer.pub:customer/customer)" != "200" ]]; do sleep 5; done\' || false'''
-          }
-        }
-        stage('Start MicroGW') {
-          steps {
-            sh '''#Run MicroGateway Container
-docker run --rm --name customermg -d -p 9090:9090 --net=host customermg:$VERSION
-
-#Is MicroGW Operational
-timeout 60 bash -c \'while [[ "$(curl -s -o /dev/null -w \'\'%{http_code}\'\' localhost:9090/gateway/Customer/1.0/customer)" != "200" ]]; do sleep 5; done\' || false'''
-          }
-        }
-      }
-    }
-    stage('Test Operational') {
-      parallel {
-        stage('Test MicroSvc Operational') {
-          steps {
-            sh '''#Are services operational
-#timeout 60 bash -c \'while [[ "$(curl -u Administrator:manage -s -o /dev/null -w \'\'%{http_code}\'\' localhost:8090/restv2/com.softwareag.customer.pub:customer/customer)" != "200" ]]; do sleep 5; done\' || false
-'''
-          }
-        }
-        stage('Test MicroGW Operational') {
-          steps {
-            sh '''#Is MicroGW Operational
-#timeout 60 bash -c \'while [[ "$(curl -s -o /dev/null -w \'\'%{http_code}\'\' localhost:9090/gateway/Customer/1.0/customer)" != "200" ]]; do sleep 5; done\' || false'''
-          }
-        }
       }
     }
     stage('Testing') {
@@ -186,8 +129,6 @@ pwd
 cd MSR-Image
 cd ISPKG/APIWCustomer/resources/test/executor
 ant -buildfile run-test-suites.xml
-#cd /home/ukdxp/WmBuildTools
-#ant -buildfile build-test.xml -Denv.WEBMETHODS_HOME=/home/ukdxp/107/wMServiceDesigner
 
 
 cp -r ./test/reports/ ${WORKSPACE}/test-results
@@ -209,17 +150,6 @@ else
    echo "Error in interface test for Micro Service"
    exit 1
 fi'''
-            echo 'Test Gateway'
-            sh '''#Test Gateway
-test=`curl -s http://apiworldbuild:9090/gateway/Customer/1.0/customer | grep Pemberton | wc -l`
-
-
-if [ $test -gt 0 ]; then
-   echo "Test Passed"
-else
-   echo "Error in interface test for MicroGateway"
-   exit 1
-fi'''
           }
         }
       }
@@ -237,11 +167,11 @@ fi'''
 
 #First tag
 docker tag customerservice:$VERSION apiworldref:5000/customerservice:$VERSION
-docker tag customermg:$VERSION apiworldref:5000/customermg:$VERSION
+
 
 #second push 
 docker push apiworldref:5000/customerservice:$VERSION
-docker push apiworldref:5000/customermg:$VERSION'''
+'''
       }
     }
     stage('Release To Test') {
@@ -269,7 +199,6 @@ if [ $deployActive -gt 0 ]; then
    echo "Perform Rolling Update"
    #Do a rolling update
    kubectl set image deployment.v1.apps/product-service-deployment product-service=apiworldref:5000/productservice:$VERSION
-   kubectl set image deployment.v1.apps/product-service-deployment product-service-sidecar=apiworldref:5000/productmg:$VERSION
    
    #Now wait for deploy
    kubectl rollout status deployment.v1.apps/product-service-deployment
@@ -310,7 +239,6 @@ if [ $deployActive -gt 0 ]; then
    echo "Perform Rolling Update"
    #Do a rolling update
    kubectl set image deployment.v1.apps/customer-service-deployment customer-service=apiworldref:5000/customerservice:$VERSION
-   kubectl set image deployment.v1.apps/customer-service-deployment customer-service-sidecar=apiworldref:5000/customermg:$VERSION
    
    #Now wait for deploy
    kubectl rollout status deployment.v1.apps/customer-service-deployment
@@ -335,7 +263,7 @@ fi
 
 #Stop containers
 #docker stop productmg
-#docker stop productservicems
+
 
 #Prune
 docker image prune -f

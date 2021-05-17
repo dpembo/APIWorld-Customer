@@ -34,34 +34,8 @@ spec:
         prometheus.io/scrape: "true"
     spec:
       containers:
-      - name: customer-service-sidecar
-        imagePullPolicy: Always
-        image: apiworldref:5000/customermg:latest
-        ports:
-        - containerPort: 9090       # must match the exposed port of the microgateway docker image
-        livenessProbe:
-          exec:
-            command:
-            - /bin/sh
-            - -c
-            - /opt/softwareag/Microgateway/files/k8s-lifenesscheck.sh
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
-        readinessProbe:
-          exec:
-            command:
-            - /bin/sh
-            - -c
-            - /opt/softwareag/Microgateway/files/k8s-readinesscheck.sh
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
       - name: customer-service
         imagePullPolicy: Always
         image: apiworldref:5000/customerservice:latest
         ports:
         - containerPort: 8090
-      
