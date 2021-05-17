@@ -14,4 +14,7 @@ spec:
     - name: http
       port: 9090
       nodePort: 30082
+    - name: ismsr
+      port: 5555
+      nodePort: 31082
   type: NodePort
