@@ -14,5 +14,8 @@ spec:
     - name: http
       port: 9090
       nodePort: 30082
+    - name: http
+      port: 8090
+      nodePort: 40082
 
   type: NodePort
