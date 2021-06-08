@@ -1,3 +1,4 @@
+rem TEST
 set username=Administrator
 set password=manage
 set url=http://localhost:5555
