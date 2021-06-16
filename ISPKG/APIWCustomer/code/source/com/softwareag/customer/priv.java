@@ -63,6 +63,7 @@ public final class priv
 		IData	contact = IDataFactory.create();
 		IDataCursor contactCursor = contact.getCursor();
 		IDataUtil.put( contactCursor, "email", "dave.pemberton@softwareag.com" );
+		IDataUtil.put( contactCursor, "telephone", "01332611000" );
 		
 		// customers.contact.address
 		IData	address = IDataFactory.create();
